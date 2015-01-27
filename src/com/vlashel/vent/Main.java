@@ -20,21 +20,21 @@ public class Main extends Application {
     private void init(Stage primaryStage) {
         Group root = new Group();
         primaryStage.setResizable(false);
-        primaryStage.setScene(new Scene(root, 700, 500));
+        primaryStage.setScene(new Scene(root, 690, 490));
         root.getChildren().add(background);
 
         ClimateControlMediator mediator = new ClimateControlMediator();
 
         RoomClimateControl room1ClimateControl = new RoomClimateControl(
-                new Ventilator(460, 40),
-                new TemperatureSlider(10, 45),
-                new TemperatureIndicator(135, 15),
+                new Ventilator(450, 45),
+                new TemperatureSlider(10, 50),
+                new TemperatureIndicator(87, 60),
                 new ToggleSwitch(664, 50),
                 mediator, Position.UP);
         RoomClimateControl room2ClimateControl = new RoomClimateControl(
-                new Ventilator(460, 290),
-                new TemperatureSlider(10, 295),
-                new TemperatureIndicator(135, 260),
+                new Ventilator(450, 300),
+                new TemperatureSlider(10, 300),
+                new TemperatureIndicator(87, 315),
                 new ToggleSwitch(668,305),
                 mediator, Position.DOWN);
 

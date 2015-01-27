@@ -40,8 +40,8 @@ public class PathLine extends Path {
     public void createHighPath(Color color) {
         this.setStroke(color);
         this.setStrokeWidth(5);
-        this.getElements().add(new MoveTo(240, 363));
-        this.getElements().add(new HLineTo(300));
+        this.getElements().add(new MoveTo(220, 363));
+        this.getElements().add(new HLineTo(280));
         this.getElements().add(new VLineTo(110));
         this.getElements().add(new HLineTo(240));
         this.getElements().add(new LineTo(245, 105));
@@ -53,7 +53,7 @@ public class PathLine extends Path {
     public void createLowPath(Color color) {
         this.setStroke(color);
         this.setStrokeWidth(5);
-        this.getElements().add(new MoveTo(240, 363));
+        this.getElements().add(new MoveTo(220, 363));
         this.getElements().add(new HLineTo(300));
         this.getElements().add(new VLineTo(110));
         this.getElements().add(new HLineTo(240));

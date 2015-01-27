@@ -1,6 +1,7 @@
 package com.vlashel.vent;
 
 import javafx.scene.control.Label;
+import javafx.scene.text.Font;
 
 /**
  * @author vshel
@@ -12,5 +13,6 @@ public class TemperatureIndicator extends Label {
     public TemperatureIndicator(double translateX, double translateY) {
         this.setTranslateX(translateX);
         this.setTranslateY(translateY);
+        this.setFont(Font.font(70));
     }
 }
