@@ -35,7 +35,7 @@ public class Main extends Application {
                 new Ventilator(450, 300),
                 new TemperatureSlider(10, 300),
                 new TemperatureIndicator(87, 315),
-                new ToggleSwitch(668,305),
+                new ToggleSwitch(664,305),
                 mediator, Position.DOWN);
 
         mediator.addControl(room1ClimateControl);
