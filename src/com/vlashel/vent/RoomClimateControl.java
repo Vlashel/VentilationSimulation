@@ -58,7 +58,7 @@ public class RoomClimateControl extends Parent {
                 && control.temperatureSlider.valueProperty().get() > temperature) {
             this.ventilator.changeRotationDirection();
             this.ventilator.getRotateTransition().setRate(Ventilator.FAST_SPEED);
-            Path path = new PathLine(control.getPosition(), Color.RED);
+            Path path = new PathLine(control.getPosition(), Color.CRIMSON);
             pathToBeRemoved = path;
             currentControl.partner = control;
             control.partner = currentControl;
@@ -67,7 +67,7 @@ public class RoomClimateControl extends Parent {
                 && control.temperatureSlider.valueProperty().get() < temperature) {
             this.ventilator.changeRotationDirection();
             this.ventilator.getRotateTransition().setRate(Ventilator.FAST_SPEED);
-            Path path = new PathLine(control.getPosition(), Color.BLUE);
+            Path path = new PathLine(control.getPosition(), Color.AQUA);
             pathToBeRemoved = path;
             currentControl.partner = control;
             control.partner = currentControl;

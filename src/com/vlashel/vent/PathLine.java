@@ -18,9 +18,9 @@ public class PathLine extends Path {
 
     public PathLine(Position choice, Color color) {
         if (choice.equals(Position.UP)) {
-            createHighPath(color);
+            createPathUp(color);
         } else {
-            createLowPath(color);
+            createPathDown(color);
         }
         initFadeTransition();
     }
@@ -37,34 +37,28 @@ public class PathLine extends Path {
         fadeTransition.play();
     }
 
-    public void createHighPath(Color color) {
-        this.setStroke(color);
-        this.setStrokeWidth(5);
-        this.getElements().add(new MoveTo(220, 363));
-        this.getElements().add(new HLineTo(280));
-        this.getElements().add(new VLineTo(110));
-        this.getElements().add(new HLineTo(240));
-        this.getElements().add(new LineTo(245, 105));
-        this.getElements().add(new MoveTo(240, 110));
-        this.getElements().add(new LineTo(245, 115));
-
+    public void createPathUp(Color color) {
+        buildPath(color);
     }
 
-    public void createLowPath(Color color) {
-        this.setStroke(color);
-        this.setStrokeWidth(5);
-        this.getElements().add(new MoveTo(220, 363));
-        this.getElements().add(new HLineTo(300));
-        this.getElements().add(new VLineTo(110));
-        this.getElements().add(new HLineTo(240));
-        this.getElements().add(new LineTo(245, 105));
-        this.getElements().add(new MoveTo(240, 110));
-        this.getElements().add(new LineTo(245, 115));
+    public void createPathDown(Color color) {
+        buildPath(color);
 
         this.setRotate(180);
         this.setScaleX(-1);
-        this.setTranslateY(8);
+        this.setTranslateY(12);
+    }
 
+    private void buildPath(Color color) {
+        this.setStroke(color);
+        this.setStrokeWidth(5);
+        this.getElements().add(new MoveTo(200, 383));
+        this.getElements().add(new HLineTo(275));
+        this.getElements().add(new VLineTo(120));
+        this.getElements().add(new HLineTo(200));
+        this.getElements().add(new LineTo(225, 105));
+        this.getElements().add(new LineTo(200, 120));
+        this.getElements().add(new LineTo(225, 135));
     }
 
     public FadeTransition getFadeTransition() {
