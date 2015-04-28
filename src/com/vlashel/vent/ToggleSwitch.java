@@ -12,15 +12,15 @@ public class ToggleSwitch extends ToggleButton {
 
         this.setOnAction((ActionEvent event) -> {
             if (this.isSelected()) {
-                animationMediator.finishAnimation();
-            } else {
                 animationMediator.startAnimation();
+            } else {
+                animationMediator.finishAnimation();
             }
         });
 
         this.setSelected(false);
-        Image selected = new Image(Ventilator.class.getResource("images/on-button.png").toExternalForm());
-        Image unselected = new Image(Ventilator.class.getResource("images/off-button.png").toExternalForm());
+        Image selected = new Image(Ventilator.class.getResource("images/off-button.png").toExternalForm());
+        Image unselected = new Image(Ventilator.class.getResource("images/on-button.png").toExternalForm());
 
         ImageView toggleImage = new ImageView();
         this.setGraphic(toggleImage);

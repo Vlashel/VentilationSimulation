@@ -19,7 +19,7 @@ public class Simulation extends Application {
         DataModule dataModule = new DataModule();
         animationMediator.registerDataModule(dataModule);
 
-        TemperaturesChart chart = new TemperaturesChart();
+        TemperaturesChart chart = new TemperaturesChart(dataModule);
         animationMediator.registerTemperaturesChart(chart);
 
         Ventilator roomAVentilatorIn = new Ventilator();

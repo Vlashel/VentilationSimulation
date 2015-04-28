@@ -57,17 +57,12 @@ public class AnimationMediator {
         ventilators.forEach(Ventilator::stopVentilatorGradually);
     }
 
-    private void prepareChart() {
-        temperaturesChart.setxUpperBound(dataModule.getTotalTime());
-        temperaturesChart.setyUpperBound(dataModule.getRoomATemperatures()[0]);
-    }
 
     private void prepareVentilators() {
         ventilators.forEach(v -> applicationAnimation.getChildren().add(v.getAnimation()));
     }
 
     private void prepareAnimation() {
-        prepareChart();
         prepareVentilators();
 
         double speed = 0.05;

@@ -9,22 +9,21 @@ public class TemperaturesChart extends LineChart<Number, Number> {
     private XYChart.Series<Number, Number> roomASeries;
     private XYChart.Series<Number, Number> roomBSeries;
     private Timeline timeline;
-    private double xUpperBound;
-    private double yUpperBound;
+    private DataModule dataModule;
 
-    public TemperaturesChart() {
+    public TemperaturesChart(DataModule dataModule) {
         super(new NumberAxis(), new NumberAxis());
 
         this.getStylesheets().add(getClass().getResource("css/stylesheets.css").toExternalForm());
         this.setCreateSymbols(false);
 
         NumberAxis xAxis = (NumberAxis) this.getXAxis();
-        xAxis.setUpperBound(xUpperBound);
+        xAxis.setUpperBound(dataModule.getTotalTime());
         xAxis.setAutoRanging(false);
         xAxis.setLabel("Time in seconds");
 
         NumberAxis yAxis = (NumberAxis) this.getYAxis();
-        yAxis.setUpperBound(yUpperBound);
+        yAxis.setUpperBound(dataModule.getRoomATemperatures()[0]);
         yAxis.setAutoRanging(false);
         yAxis.setLabel("Temperature in Celsius");
 
@@ -49,13 +48,5 @@ public class TemperaturesChart extends LineChart<Number, Number> {
 
     public Timeline getAnimation() {
         return timeline;
-    }
-
-    public void setxUpperBound(double xUpperBound) {
-        this.xUpperBound = xUpperBound;
-    }
-
-    public void setyUpperBound(double yUpperBound) {
-        this.yUpperBound = yUpperBound;
     }
 }
