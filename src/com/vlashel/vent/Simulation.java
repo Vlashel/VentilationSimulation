@@ -13,20 +13,26 @@ import java.util.List;
 
 public class Simulation extends Application {
 
-
-
     private void init(Stage primaryStage) {
-        Mediator mediator = new Mediator();
+        AnimationMediator animationMediator = new AnimationMediator();
 
-        TemperaturesChart chart = new TemperaturesChart(new ComputationModule(), mediator);
-        mediator.registerTemperaturesChart(chart);
+        DataModule dataModule = new DataModule();
+        animationMediator.registerDataModule(dataModule);
+
+        TemperaturesChart chart = new TemperaturesChart();
+        animationMediator.registerTemperaturesChart(chart);
 
         Ventilator roomAVentilatorIn = new Ventilator();
         Ventilator roomAVentilatorOut = new Ventilator(-360);
-
-
         Ventilator roomBVentilatorIn = new Ventilator();
         Ventilator roomBVentilatorOut = new Ventilator(-360);
+
+        animationMediator.registerVentilators(
+                roomAVentilatorIn,
+                roomAVentilatorOut,
+                roomBVentilatorIn,
+                roomBVentilatorOut
+        );
 
         List<Ventilator> ventilators = new ArrayList<>();
         ventilators.add(roomAVentilatorIn);
@@ -38,25 +44,23 @@ public class Simulation extends Application {
 
         HBox hBox = new HBox();
         ventilators.forEach((it) -> {
-            parallelTransition.getChildren().add(it.getAnimation());
             hBox.getChildren().add(it);
         });
 
         parallelTransition.getChildren().add(chart.getAnimation());
         hBox.getChildren().add(chart);
 
-        mediator.registerAnimation(parallelTransition);
+        animationMediator.registerApplicationAnimation(parallelTransition);
 
-        ToggleSwitch button = new ToggleSwitch(mediator);
-        mediator.registerToggleSwitch(button);
+        ToggleSwitch button = new ToggleSwitch(animationMediator);
+        animationMediator.registerToggleSwitch(button);
 
         TemperatureIndicator roomATemperatureIndicator = new TemperatureIndicator();
-        mediator.registerRoomATemperature(roomATemperatureIndicator);
+        animationMediator.registerRoomATemperatureIndicator(roomATemperatureIndicator);
 
         TemperatureIndicator roomBTemperatureIndicator = new TemperatureIndicator();
-        mediator.registerRoomBTemperature(roomBTemperatureIndicator);
+        animationMediator.registerRoomBTemperatureIndicator(roomBTemperatureIndicator);
 
-        mediator.registerVentilators(ventilators);
         hBox.getChildren().add(button);
         hBox.getChildren().add(roomATemperatureIndicator);
         hBox.getChildren().add(roomBTemperatureIndicator);

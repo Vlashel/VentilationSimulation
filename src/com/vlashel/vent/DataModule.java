@@ -1,11 +1,6 @@
 package com.vlashel.vent;
 
-/**
- * @author Vlashel
- * @version 1.0
- * @since 27.04.2015.
- */
-public class ComputationModule {
+public class DataModule {
     private double totalTime;
     private int steps;
     private double[] roomATemperatures;
@@ -14,7 +9,7 @@ public class ComputationModule {
     private double roomAVolume;
     private double roomBVolume;
 
-    public ComputationModule() {
+    public DataModule() {
         totalTime = 270; // seconds
         steps = 270;
         roomATemperatures = new double[steps + 1];
@@ -30,10 +25,6 @@ public class ComputationModule {
 
     public double getTotalTime() {
         return totalTime;
-    }
-
-    public void registerTotalTime(double totalTime) {
-        this.totalTime = totalTime;
     }
 
     public int getSteps() {

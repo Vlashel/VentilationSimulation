@@ -8,9 +8,15 @@ import javafx.scene.image.ImageView;
 
 public class ToggleSwitch extends ToggleButton {
 
-    public ToggleSwitch(Mediator mediator) {
+    public ToggleSwitch(AnimationMediator animationMediator) {
 
-        this.setOnAction((ActionEvent event) -> mediator.animate());
+        this.setOnAction((ActionEvent event) -> {
+            if (this.isSelected()) {
+                animationMediator.finishAnimation();
+            } else {
+                animationMediator.startAnimation();
+            }
+        });
 
         this.setSelected(false);
         Image selected = new Image(Ventilator.class.getResource("images/on-button.png").toExternalForm());
