@@ -1,71 +1,66 @@
 package com.vlashel.vent;
 
-import javafx.animation.ParallelTransition;
 import javafx.application.Application;
-
-
 import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class Simulation extends Application {
 
     private void init(Stage primaryStage) {
         AnimationMediator animationMediator = new AnimationMediator();
-
         DataModule dataModule = new DataModule();
-        animationMediator.registerDataModule(dataModule);
-
         TemperaturesChart chart = new TemperaturesChart(dataModule);
-        animationMediator.registerTemperaturesChart(chart);
-
         Ventilator roomAVentilatorIn = new Ventilator();
         Ventilator roomAVentilatorOut = new Ventilator(-360);
         Ventilator roomBVentilatorIn = new Ventilator();
         Ventilator roomBVentilatorOut = new Ventilator(-360);
+        StartButton button = new StartButton(animationMediator);
+        TemperatureIndicator roomATemperatureIndicator = new TemperatureIndicator();
+        TemperatureIndicator roomBTemperatureIndicator = new TemperatureIndicator();
 
+
+        animationMediator.registerDataModule(dataModule);
+        animationMediator.registerTemperaturesChart(chart);
         animationMediator.registerVentilators(
                 roomAVentilatorIn,
                 roomAVentilatorOut,
                 roomBVentilatorIn,
                 roomBVentilatorOut
         );
-
-        List<Ventilator> ventilators = new ArrayList<>();
-        ventilators.add(roomAVentilatorIn);
-        ventilators.add(roomAVentilatorOut);
-        ventilators.add(roomBVentilatorIn);
-        ventilators.add(roomBVentilatorOut);
-
-        ParallelTransition parallelTransition = new ParallelTransition();
-
-        HBox hBox = new HBox();
-        ventilators.forEach((it) -> {
-            hBox.getChildren().add(it);
-        });
-
-        parallelTransition.getChildren().add(chart.getAnimation());
-        hBox.getChildren().add(chart);
-
-        animationMediator.registerApplicationAnimation(parallelTransition);
-
-        ToggleSwitch button = new ToggleSwitch(animationMediator);
         animationMediator.registerToggleSwitch(button);
-
-        TemperatureIndicator roomATemperatureIndicator = new TemperatureIndicator();
         animationMediator.registerRoomATemperatureIndicator(roomATemperatureIndicator);
-
-        TemperatureIndicator roomBTemperatureIndicator = new TemperatureIndicator();
         animationMediator.registerRoomBTemperatureIndicator(roomBTemperatureIndicator);
 
-        hBox.getChildren().add(button);
-        hBox.getChildren().add(roomATemperatureIndicator);
-        hBox.getChildren().add(roomBTemperatureIndicator);
+        HBox mainHBox = new HBox();
+        mainHBox.getChildren().add(chart);
 
-        primaryStage.setScene(new Scene(hBox));
+        HBox rightHBox = new HBox();
+
+        mainHBox.getChildren().add(rightHBox);
+
+        VBox leftVBox = new VBox();
+        leftVBox.getChildren().add(roomATemperatureIndicator);
+        leftVBox.getChildren().add(roomBTemperatureIndicator);
+
+        VBox rightVBox = new VBox();
+        HBox topHBox = new HBox();
+        topHBox.getChildren().add(roomAVentilatorIn);
+        topHBox.getChildren().add(roomAVentilatorOut);
+
+        HBox bottomHBox = new HBox();
+        bottomHBox.getChildren().add(roomBVentilatorIn);
+        bottomHBox.getChildren().add(roomBVentilatorOut);
+        rightVBox.getChildren().add(topHBox);
+        rightVBox.getChildren().add(bottomHBox);
+        rightVBox.getChildren().add(button);
+
+        rightHBox.getChildren().add(leftVBox);
+        rightHBox.getChildren().add(rightVBox);
+
+        primaryStage.setScene(new Scene(mainHBox));
     }
 
 

@@ -1,34 +1,30 @@
 package com.vlashel.vent;
 
 import javafx.animation.KeyFrame;
-import javafx.animation.ParallelTransition;
 import javafx.event.ActionEvent;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AnimationMediator {
-    private ParallelTransition applicationAnimation;
-    private ToggleSwitch toggleSwitch;
+    private StartButton startButton;
     private DataModule dataModule;
     private TemperaturesChart temperaturesChart;
     private TemperatureIndicator roomATemperature;
     private TemperatureIndicator roomBTemperature;
-    private List<Ventilator> ventilators = new ArrayList<>();
+    private List<Ventilator> ventilators;
 
     public void registerVentilators(Ventilator... ventilators) {
-        for (Ventilator v : ventilators) {
-            this.ventilators.add(v);
-        }
+        this.ventilators = Arrays.asList(ventilators);
     }
 
     public void registerDataModule(DataModule dataModule) {
         this.dataModule = dataModule;
     }
 
-    public void registerToggleSwitch(ToggleSwitch toggleSwitch) {
-        this.toggleSwitch = toggleSwitch;
+    public void registerToggleSwitch(StartButton startButton) {
+        this.startButton = startButton;
     }
 
     public void registerTemperaturesChart(TemperaturesChart temperaturesChart) {
@@ -43,29 +39,20 @@ public class AnimationMediator {
         this.roomBTemperature = roomBTemperature;
     }
 
-    public void registerApplicationAnimation(ParallelTransition animation) {
-        this.applicationAnimation = animation;
-    }
-
     public void startAnimation() {
         prepareAnimation();
-        applicationAnimation.play();
+        temperaturesChart.play();
+        ventilators.forEach(Ventilator::play);
     }
 
     public void finishAnimation() {
-        applicationAnimation.stop();
         ventilators.forEach(Ventilator::stopVentilatorGradually);
-    }
-
-
-    private void prepareVentilators() {
-        ventilators.forEach(v -> applicationAnimation.getChildren().add(v.getAnimation()));
+        temperaturesChart.stop();
     }
 
     private void prepareAnimation() {
-        prepareVentilators();
+        double speed = 0.1;
 
-        double speed = 0.05;
         int stepIndex = 0;
         double timePoint = 0.0;
         double dt = dataModule.getTotalTime() / dataModule.getSteps();
