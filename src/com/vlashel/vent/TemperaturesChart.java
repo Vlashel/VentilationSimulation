@@ -1,5 +1,6 @@
 package com.vlashel.vent;
 
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -8,20 +9,17 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.util.Duration;
 
-/**
- * @author Vlashel
- * @version 1.0
- * @since 27.04.2015.
- */
 public class TemperaturesChart extends LineChart<Number, Number> {
     private XYChart.Series<Number, Number> roomASeries;
     private XYChart.Series<Number, Number> roomBSeries;
     private Timeline timeline;
     private ComputationModule computationModule;
+    private Mediator mediator;
 
-    public TemperaturesChart(ComputationModule computationModule) {
+    public TemperaturesChart(ComputationModule computationModule, Mediator mediator) {
         super(new NumberAxis(), new NumberAxis());
         this.computationModule = computationModule;
+        this.mediator = mediator;
 
         this.getStylesheets().add(getClass().getResource("css/stylesheets.css").toExternalForm());
         this.setCreateSymbols(false);
@@ -50,20 +48,18 @@ public class TemperaturesChart extends LineChart<Number, Number> {
         this.getData().add(roomBSeries);
 
         prepareAnimation();
-        animate();
-    }
-
-    public void animate() {
-        timeline.play();
     }
 
     private void plot(double timePoint, int stepIndex) {
+        mediator.setRoomATemperatureIndicatorValue(computationModule.getRoomATemperatures()[stepIndex]);
+        mediator.setRoomBTemperatureIndicatorValue(computationModule.getRoomBTemperatures()[stepIndex]);
+
         roomASeries.getData().add(new XYChart.Data<>(timePoint, computationModule.getRoomATemperatures()[stepIndex]));
         roomBSeries.getData().add(new XYChart.Data<>(timePoint, computationModule.getRoomBTemperatures()[stepIndex]));
     }
 
     private void prepareAnimation() {
-        double speed = 0.25;
+        double speed = 0.05;
 
         int stepIndex = 0;
         double timePoint = 0.0;
@@ -86,5 +82,11 @@ public class TemperaturesChart extends LineChart<Number, Number> {
                 timePoint++;
             }
         }
+
+        timeline.setOnFinished((ActionEvent event) -> mediator.finish());
+    }
+
+    public Animation getAnimation() {
+        return timeline;
     }
 }

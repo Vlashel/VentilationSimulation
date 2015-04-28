@@ -15,13 +15,13 @@ public class ComputationModule {
     private double roomBVolume;
 
     public ComputationModule() {
-        totalTime = 360; // seconds
-        steps = 360;
+        totalTime = 270; // seconds
+        steps = 270;
         roomATemperatures = new double[steps + 1];
         roomBTemperatures = new double[steps + 1];
         roomATemperatures[0] = 35.0; // initial temperature in Celsius
-        roomBTemperatures[0] = 16.0; // initial temperature in Celsius
-        Q = 1.7; // volumetric flow rate in cubic meters per second
+        roomBTemperatures[0] = 11.0; // initial temperature in Celsius
+        Q = 4.5; // volumetric flow rate in cubic meters per second
         roomAVolume = 575.0; // cubic meters
         roomBVolume = 520.0; // cubic meters
 
@@ -32,7 +32,7 @@ public class ComputationModule {
         return totalTime;
     }
 
-    public void setTotalTime(double totalTime) {
+    public void registerTotalTime(double totalTime) {
         this.totalTime = totalTime;
     }
 
@@ -40,48 +40,12 @@ public class ComputationModule {
         return steps;
     }
 
-    public void setSteps(int steps) {
-        this.steps = steps;
-    }
-
     public double[] getRoomATemperatures() {
         return roomATemperatures;
     }
 
-    public void setRoomATemperatures(double[] roomATemperatures) {
-        this.roomATemperatures = roomATemperatures;
-    }
-
     public double[] getRoomBTemperatures() {
         return roomBTemperatures;
-    }
-
-    public void setRoomBTemperatures(double[] roomBTemperatures) {
-        this.roomBTemperatures = roomBTemperatures;
-    }
-
-    public double getQ() {
-        return Q;
-    }
-
-    public void setQ(double q) {
-        Q = q;
-    }
-
-    public double getRoomAVolume() {
-        return roomAVolume;
-    }
-
-    public void setRoomAVolume(double roomAVolume) {
-        this.roomAVolume = roomAVolume;
-    }
-
-    public double getRoomBVolume() {
-        return roomBVolume;
-    }
-
-    public void setRoomBVolume(double roomBVolume) {
-        this.roomBVolume = roomBVolume;
     }
 
     private void compute() {

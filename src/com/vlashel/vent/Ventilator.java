@@ -1,56 +1,57 @@
 package com.vlashel.vent;
 
-import javafx.animation.Interpolator;
-import javafx.animation.RotateTransition;
-import javafx.animation.Timeline;
+import javafx.animation.*;
+import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.util.Duration;
 
-/**
- * @author vshel
- * @version 1.0
- * @since 12/25/2014
- */
 public class Ventilator extends ImageView {
-    public static final double FAST_SPEED = 0.9;
     public static final double MEDIUM_SPEED = 0.3;
     private RotateTransition rotateTransition;
-    private boolean isOn = true;
+    private double angle = 360;
 
-    public Ventilator(double translateX, double translateY) {
+    public Ventilator() {
         super(new Image(Ventilator.class.getResource("images/propeller.png").toExternalForm()));
+        createRotateTransition();
+    }
+
+    public Ventilator(double angle) {
+        super(new Image(Ventilator.class.getResource("images/propeller.png").toExternalForm()));
+        this.angle = angle;
+        createRotateTransition();
+    }
+
+
+    public void stopVentilatorGradually() {
+        createRotateTransition();
+        rotateTransition.play();
+
+        Timeline timeline = new Timeline();
+        timeline.getKeyFrames().add(
+                new KeyFrame(Duration.millis(500),
+                        new KeyValue(rotateTransition.rateProperty(), 0.2)));
+        timeline.getKeyFrames().add(
+                new KeyFrame(Duration.millis(1000),
+                        new KeyValue(rotateTransition.rateProperty(), 0.1)));
+        timeline.getKeyFrames().add(
+                new KeyFrame(Duration.millis(1400),
+                        new KeyValue(rotateTransition.rateProperty(), 0)));
+
+        timeline.play();
+        timeline.setOnFinished((ActionEvent event) -> timeline.stop());
+    }
+
+    public void createRotateTransition() {
         rotateTransition = new RotateTransition();
         rotateTransition.setNode(this);
         rotateTransition.setInterpolator(Interpolator.LINEAR);
         rotateTransition.setCycleCount(Timeline.INDEFINITE);
-        rotateTransition.setByAngle(360);
+        rotateTransition.setByAngle(angle);
         rotateTransition.setRate(Ventilator.MEDIUM_SPEED);
-        rotateTransition.play();
-
-        this.setTranslateX(translateX);
-        this.setTranslateY(translateY);
     }
 
-    public void changeRotationDirection() {
-        double currentAngle = rotateTransition.getByAngle();
-        rotateTransition.setByAngle(currentAngle * -1);
-        rotateTransition.stop();
-        rotateTransition.play();
-    }
-
-    public boolean isOn() {
-        return isOn;
-    }
-
-    public void setOn(boolean isOn) {
-        this.isOn = isOn;
-    }
-
-    public RotateTransition getRotateTransition() {
+    public Animation getAnimation() {
         return rotateTransition;
-    }
-
-    public void setRotateTransition(RotateTransition rotateTransition) {
-        this.rotateTransition = rotateTransition;
     }
 }
