@@ -6,7 +6,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
-public class Ventilator extends ImageView implements Animatable{
+public class Ventilator extends ImageView implements Animatable {
     public static final double MEDIUM_SPEED = 0.3;
     private RotateTransition rotateTransition;
     private double angle = 360;
@@ -23,7 +23,7 @@ public class Ventilator extends ImageView implements Animatable{
     }
 
 
-    public void stopVentilatorGradually() {
+    private void stopVentilatorGradually() {
         rotateTransition.play();
 
         Timeline timeline = new Timeline();
@@ -38,10 +38,9 @@ public class Ventilator extends ImageView implements Animatable{
                         new KeyValue(rotateTransition.rateProperty(), 0)));
 
         timeline.play();
-        //timeline.setOnFinished((ActionEvent event) -> stop());
     }
 
-    public void createRotateTransition() {
+    private void createRotateTransition() {
         rotateTransition = new RotateTransition();
         rotateTransition.setNode(this);
         rotateTransition.setInterpolator(Interpolator.LINEAR);
@@ -63,5 +62,6 @@ public class Ventilator extends ImageView implements Animatable{
     @Override
     public void stop() {
         rotateTransition.stop();
+        stopVentilatorGradually();
     }
 }

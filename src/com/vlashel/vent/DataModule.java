@@ -1,6 +1,6 @@
 package com.vlashel.vent;
 
-public class DataModule {
+public class DataModule implements Refreshable {
     private double totalTime;
     private int steps;
     private double[] roomATemperatures;
@@ -39,6 +39,19 @@ public class DataModule {
         return roomBTemperatures;
     }
 
+    public double getMaximumAchievableTemperature() {
+        return roomATemperatures[0] < roomBTemperatures[0] ?
+                roomATemperatures[steps] : roomBTemperatures[steps];
+    }
+
+    public double getHighestTemperature() {
+        return Math.max(roomATemperatures[0], roomBTemperatures[0]);
+    }
+
+    public double getLowestTemperature() {
+        return Math.min(roomATemperatures[0], roomBTemperatures[0]);
+    }
+
     private void compute() {
         double dt = totalTime / steps;
         for (int i = 0; i < steps; i++) {
@@ -49,6 +62,16 @@ public class DataModule {
             roomATemperatures[i + 1] = roomATemperatures[i] + dTadt * dt;
         }
         print();
+    }
+
+    public void setInitialTemperatures(double roomATemperature, double roomBTemperature) {
+        this.roomATemperatures[0] = roomATemperature;
+        this.roomBTemperatures[0] = roomBTemperature;
+    }
+
+    @Override
+    public void refresh() {
+        compute();
     }
 
     private void print() {

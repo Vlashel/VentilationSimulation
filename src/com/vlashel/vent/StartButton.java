@@ -8,10 +8,20 @@ public class StartButton extends Button {
     public StartButton(AnimationMediator animationMediator) {
         this.setOnAction((ActionEvent event) -> {
                     animationMediator.startAnimation();
-                    this.setDisabled(true);
+                    animationMediator.enableStopButton();
+                    animationMediator.disableTemperatureSlider();
+                    disable();
                 }
 
         );
         this.setText("Start");
+    }
+
+    public void enable() {
+        this.setDisabled(false);
+    }
+
+    public void disable() {
+        this.setDisabled(true);
     }
 }

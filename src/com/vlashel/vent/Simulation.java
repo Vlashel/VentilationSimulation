@@ -2,8 +2,10 @@ package com.vlashel.vent;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 
@@ -15,52 +17,47 @@ public class Simulation extends Application {
         TemperaturesChart chart = new TemperaturesChart(dataModule);
         Ventilator roomAVentilatorIn = new Ventilator();
         Ventilator roomAVentilatorOut = new Ventilator(-360);
-        Ventilator roomBVentilatorIn = new Ventilator();
-        Ventilator roomBVentilatorOut = new Ventilator(-360);
-        StartButton button = new StartButton(animationMediator);
+        StartButton startButton = new StartButton(animationMediator);
+        StopButton stopButton = new StopButton(animationMediator);
         TemperatureIndicator roomATemperatureIndicator = new TemperatureIndicator();
         TemperatureIndicator roomBTemperatureIndicator = new TemperatureIndicator();
+        TemperatureSlider temperatureSlider = new TemperatureSlider(dataModule);
 
 
         animationMediator.registerDataModule(dataModule);
         animationMediator.registerTemperaturesChart(chart);
         animationMediator.registerVentilators(
                 roomAVentilatorIn,
-                roomAVentilatorOut,
-                roomBVentilatorIn,
-                roomBVentilatorOut
+                roomAVentilatorOut
         );
-        animationMediator.registerToggleSwitch(button);
+        animationMediator.registerStartButton(startButton);
+        animationMediator.registerStopButton(stopButton);
         animationMediator.registerRoomATemperatureIndicator(roomATemperatureIndicator);
         animationMediator.registerRoomBTemperatureIndicator(roomBTemperatureIndicator);
+        animationMediator.registerTemperatureSlider(temperatureSlider);
 
-        HBox mainHBox = new HBox();
-        mainHBox.getChildren().add(chart);
-
-        HBox rightHBox = new HBox();
-
-        mainHBox.getChildren().add(rightHBox);
-
-        VBox leftVBox = new VBox();
-        leftVBox.getChildren().add(roomATemperatureIndicator);
-        leftVBox.getChildren().add(roomBTemperatureIndicator);
-
-        VBox rightVBox = new VBox();
-        HBox topHBox = new HBox();
-        topHBox.getChildren().add(roomAVentilatorIn);
-        topHBox.getChildren().add(roomAVentilatorOut);
-
-        HBox bottomHBox = new HBox();
-        bottomHBox.getChildren().add(roomBVentilatorIn);
-        bottomHBox.getChildren().add(roomBVentilatorOut);
-        rightVBox.getChildren().add(topHBox);
-        rightVBox.getChildren().add(bottomHBox);
-        rightVBox.getChildren().add(button);
-
-        rightHBox.getChildren().add(leftVBox);
-        rightHBox.getChildren().add(rightVBox);
-
+        HBox mainHBox = new HBox(chart, new HBox(
+                new VBox(
+                        new HBox(
+                                new VBox(
+                                        new HBox(new Label("Room A current temperature: "), roomATemperatureIndicator)
+                                ),
+                                roomAVentilatorIn
+                        ),
+                        new HBox(
+                                new VBox(
+                                        new HBox(new Label("Room B current temperature: "), roomBTemperatureIndicator),
+                                        new HBox(new Label("Maximum achievable temperature: "), new Text(String.format("%.1f", dataModule.getMaximumAchievableTemperature())))
+                                ),
+                                roomAVentilatorOut
+                        ),
+                        temperatureSlider,
+                        startButton,
+                        stopButton
+                )
+        ));
         primaryStage.setScene(new Scene(mainHBox));
+        stopButton.disable();
     }
 
 
