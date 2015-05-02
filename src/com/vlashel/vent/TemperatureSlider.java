@@ -1,6 +1,10 @@
 package com.vlashel.vent;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Slider;
+
+import java.util.Locale;
 
 /**
  * @author Vlashel
@@ -16,16 +20,20 @@ public class TemperatureSlider extends Slider implements Refreshable {
         this.setShowTickLabels(true);
         this.setShowTickMarks(true);
         this.setMajorTickUnit(1);
+        this.setMaxWidth(355);
 
         init();
     }
 
     private void init() {
-        double lowestTemperature = dataModule.getLowestTemperature();
-        double maximumAchievableTemperature = dataModule.getMaximumAchievableTemperature();
-        this.setMin(Math.floor(lowestTemperature));
-        this.setMax(Math.floor(maximumAchievableTemperature));
-        this.setValue(Math.floor(lowestTemperature + maximumAchievableTemperature) / 2);
+        double lowestTemperature = Double.
+                valueOf(String.format(Locale.ENGLISH, "%.1f", dataModule.getLowestTemperature()));
+        double maximumAchievableTemperature = Double.
+                valueOf(String.format(Locale.ENGLISH, "%.1f", dataModule.getMaximumAchievableTemperature()));
+
+        this.setMin(lowestTemperature);
+        this.setMax(maximumAchievableTemperature);
+
     }
 
     @Override

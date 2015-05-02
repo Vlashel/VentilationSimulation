@@ -8,10 +8,6 @@ public class StopButton extends Button {
         this.setOnAction(
                 (ActionEvent event) -> {
                     animationMediator.finishAnimation();
-                    animationMediator.enableStartButton();
-                    animationMediator.refreshTemperatureSlider();
-                    animationMediator.enableTemperatureSlider();
-                    disable();
                 }
         );
         this.setText("Stop");

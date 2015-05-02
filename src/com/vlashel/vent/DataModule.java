@@ -1,7 +1,7 @@
 package com.vlashel.vent;
 
 public class DataModule implements Refreshable {
-    private double totalTime;
+    private int totalTime;
     private int steps;
     private double[] roomATemperatures;
     private double[] roomBTemperatures;
@@ -23,7 +23,7 @@ public class DataModule implements Refreshable {
         compute();
     }
 
-    public double getTotalTime() {
+    public int getTotalTime() {
         return totalTime;
     }
 
@@ -67,6 +67,26 @@ public class DataModule implements Refreshable {
     public void setInitialTemperatures(double roomATemperature, double roomBTemperature) {
         this.roomATemperatures[0] = roomATemperature;
         this.roomBTemperatures[0] = roomBTemperature;
+    }
+
+    public double[] getInitialHotterRoomTemperatures() {
+        return roomATemperatures[0] > roomBTemperatures[0] ? roomATemperatures : roomBTemperatures;
+    }
+
+    public double[] getInitialColderRoomTemperatures() {
+        return roomATemperatures[0] < roomBTemperatures[0] ? roomATemperatures : roomBTemperatures;
+    }
+
+    public double getVolumetricFlowRate() {
+        return Q;
+    }
+
+    public double getRoomAVolume() {
+        return roomAVolume;
+    }
+
+    public double getRoomBVolume() {
+        return roomBVolume;
     }
 
     @Override
