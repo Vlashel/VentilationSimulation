@@ -3,20 +3,24 @@ package com.vlashel.vent;
 public class DataModule implements Refreshable {
     private int totalTime;
     private int steps;
+    private int limit;
+    private double speed;
     private double[] roomATemperatures;
     private double[] roomBTemperatures;
-    private double Q;
+    private double volumetricFlowRate;
     private double roomAVolume;
     private double roomBVolume;
 
     public DataModule() {
-        totalTime = 270; // seconds
-        steps = 270;
+        totalTime = 1000; // seconds
+        steps = 1000;
+        limit = 0;
+        speed = 1.0;
         roomATemperatures = new double[steps + 1];
         roomBTemperatures = new double[steps + 1];
         roomATemperatures[0] = 35.0; // initial temperature in Celsius
         roomBTemperatures[0] = 11.0; // initial temperature in Celsius
-        Q = 4.5; // volumetric flow rate in cubic meters per second
+        volumetricFlowRate = 6.0; // volumetric flow rate in cubic meters per second
         roomAVolume = 575.0; // cubic meters
         roomBVolume = 520.0; // cubic meters
 
@@ -40,8 +44,19 @@ public class DataModule implements Refreshable {
     }
 
     public double getMaximumAchievableTemperature() {
-        return roomATemperatures[0] < roomBTemperatures[0] ?
-                roomATemperatures[steps] : roomBTemperatures[steps];
+        return getInitialColderRoomTemperatures()[limit];
+    }
+
+    public void setVolumetricFlowRate(double volumetricFlowRate) {
+        this.volumetricFlowRate = volumetricFlowRate;
+    }
+
+    public void setRoomAVolume(double roomAVolume) {
+        this.roomAVolume = roomAVolume;
+    }
+
+    public void setRoomBVolume(double roomBVolume) {
+        this.roomBVolume = roomBVolume;
     }
 
     public double getHighestTemperature() {
@@ -55,18 +70,45 @@ public class DataModule implements Refreshable {
     private void compute() {
         double dt = totalTime / steps;
         for (int i = 0; i < steps; i++) {
-            double dTbdt = (Q / roomBVolume) * (roomATemperatures[i] - roomBTemperatures[i]);
-            double dTadt = (Q / roomAVolume) * (roomBTemperatures[i] - roomATemperatures[i]);
+            double dTbdt = (volumetricFlowRate / roomBVolume) * (roomATemperatures[i] - roomBTemperatures[i]);
+            double dTadt = (volumetricFlowRate / roomAVolume) * (roomBTemperatures[i] - roomATemperatures[i]);
 
             roomBTemperatures[i + 1] = roomBTemperatures[i] + dTbdt * dt;
             roomATemperatures[i + 1] = roomATemperatures[i] + dTadt * dt;
         }
+        findLimit();
         print();
     }
 
-    public void setInitialTemperatures(double roomATemperature, double roomBTemperature) {
+    private void findLimit() {
+        double[] colderRoomTemperatures = getInitialColderRoomTemperatures();
+
+        for (int i = 0; i < colderRoomTemperatures.length - 1; i++) {
+            double temp = Helper.cutPrecision(colderRoomTemperatures[i], "%.2f");
+            double nextTemp = Helper.cutPrecision(colderRoomTemperatures[i + 1], "%.2f");
+
+            if (temp == nextTemp) {
+                limit = i;
+                System.out.println("Limit is: " + limit);
+                break;
+            }
+        }
+    }
+
+    public void setRoomAInitialTemperature(double roomATemperature) {
         this.roomATemperatures[0] = roomATemperature;
+    }
+
+    public void setRoomBInitialTemperature(double roomBTemperature) {
         this.roomBTemperatures[0] = roomBTemperature;
+    }
+
+    public double getRoomAInitialTemperature() {
+        return this.roomATemperatures[0];
+    }
+
+    public double getRoomBInitialTemperature() {
+        return this.roomBTemperatures[0];
     }
 
     public double[] getInitialHotterRoomTemperatures() {
@@ -78,7 +120,7 @@ public class DataModule implements Refreshable {
     }
 
     public double getVolumetricFlowRate() {
-        return Q;
+        return volumetricFlowRate;
     }
 
     public double getRoomAVolume() {
@@ -87,6 +129,18 @@ public class DataModule implements Refreshable {
 
     public double getRoomBVolume() {
         return roomBVolume;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
     }
 
     @Override

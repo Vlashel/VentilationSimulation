@@ -1,5 +1,12 @@
 package com.vlashel.vent;
 
+import com.vlashel.vent.button.SettingsButton;
+import com.vlashel.vent.button.StartButton;
+import com.vlashel.vent.button.StopButton;
+import com.vlashel.vent.indicator.*;
+import com.vlashel.vent.input.TemperatureSliderInput;
+import com.vlashel.vent.window.AlertBoxWindow;
+import com.vlashel.vent.window.SettingsWindow;
 import javafx.animation.KeyFrame;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -9,18 +16,23 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
+import static com.vlashel.vent.Helper.*;
 
 public class AnimationMediator {
     private StartButton startButton;
     private StopButton stopButton;
-    private TemperatureSlider temperatureSlider;
+    private SettingsButton settingsButton;
+    private TemperatureSliderInput temperatureSliderInput;
     private DataModule dataModule;
-    private TemperaturesChart temperaturesChart;
-    private CurrentTemperatureIndicator roomATemperature;
-    private CurrentTemperatureIndicator roomBTemperature;
+    private TemperaturesChartIndicator temperaturesChartIndicator;
+    private RoomATemperatureIndicator roomATemperature;
+    private RoomBTemperatureIndicator roomBTemperature;
     private DesiredTemperatureIndicator desiredTemperatureIndicator;
+    private RoomAVolumeIndicator roomAVolumeIndicator;
+    private RoomBVolumeIndicator roomBVolumeIndicator;
+    private VolumetricFlowRateIndicator volumetricFlowRateIndicator;
     private ElapsedTimeIndicator elapsedTimeIndicator;
+    private SettingsWindow settingsWindow;
     private List<Ventilator> ventilators;
     private ElapsedTimeCounter elapsedTimeCounter = new ElapsedTimeCounter();
     private List<Refreshable> refreshables = new ArrayList<>();
@@ -33,9 +45,10 @@ public class AnimationMediator {
         registerAnimatables(ventilators);
     }
 
-    public void registerTemperatureSlider(TemperatureSlider temperatureSlider) {
-        this.temperatureSlider = temperatureSlider;
-        desiredTemperature.bind(temperatureSlider.valueProperty());
+    public void registerTemperatureSlider(TemperatureSliderInput temperatureSliderInput) {
+        this.temperatureSliderInput = temperatureSliderInput;
+        desiredTemperature.bind(temperatureSliderInput.valueProperty());
+        registerRefreshables(temperatureSliderInput);
     }
 
     public void registerAnimatables(Animatable... animatables) {
@@ -55,20 +68,24 @@ public class AnimationMediator {
         this.stopButton = stopButton;
     }
 
-    public void registerTemperaturesChart(TemperaturesChart temperaturesChart) {
-        this.temperaturesChart = temperaturesChart;
-        registerRefreshables(temperaturesChart);
-        registerAnimatables(temperaturesChart);
+    public void registerSettingsButton(SettingsButton settingsButton) {
+        this.settingsButton = settingsButton;
     }
 
-    public void registerRoomATemperatureIndicator(CurrentTemperatureIndicator roomATemperature) {
+    public void registerTemperaturesChart(TemperaturesChartIndicator temperaturesChartIndicator) {
+        this.temperaturesChartIndicator = temperaturesChartIndicator;
+        registerRefreshables(temperaturesChartIndicator);
+        registerAnimatables(temperaturesChartIndicator);
+    }
+
+    public void registerRoomATemperatureIndicator(RoomATemperatureIndicator roomATemperature) {
         this.roomATemperature = roomATemperature;
-        setRoomATemperatureIndicatorValue(dataModule.getRoomATemperatures()[0]);
+        registerRefreshables(roomATemperature);
     }
 
-    public void registerRoomBTemperatureIndicator(CurrentTemperatureIndicator roomBTemperature) {
+    public void registerRoomBTemperatureIndicator(RoomBTemperatureIndicator roomBTemperature) {
         this.roomBTemperature = roomBTemperature;
-        setRoomBTemperatureIndicatorValue(dataModule.getRoomBTemperatures()[0]);
+        registerRefreshables(roomBTemperature);
     }
 
     public void registerElapsedTimeIndicator(ElapsedTimeIndicator elapsedTimeIndicator) {
@@ -84,7 +101,25 @@ public class AnimationMediator {
         setDesiredTemperatureIndicatorValue(desiredTemperature.get());
         desiredTemperature.addListener((o, oldValue, newValue) ->
                 setDesiredTemperatureIndicatorValue(newValue.doubleValue()));
+    }
 
+    public void registerInitialConditionsWindow(SettingsWindow settingsWindow) {
+        this.settingsWindow = settingsWindow;
+    }
+
+    public void registerRoomAVolumeIndicator(RoomAVolumeIndicator roomAVolumeIndicator) {
+        this.roomAVolumeIndicator = roomAVolumeIndicator;
+        registerRefreshables(roomAVolumeIndicator);
+    }
+
+    public void registerRoomBVolumeIndicator(RoomBVolumeIndicator roomBVolumeIndicator) {
+        this.roomBVolumeIndicator = roomBVolumeIndicator;
+        registerRefreshables(roomBVolumeIndicator);
+    }
+
+    public void registerVolumetricFlowRateIndicator(VolumetricFlowRateIndicator volumetricFlowRateIndicator) {
+        this.volumetricFlowRateIndicator = volumetricFlowRateIndicator;
+        registerRefreshables(volumetricFlowRateIndicator);
     }
 
     public void refresh() {
@@ -95,6 +130,7 @@ public class AnimationMediator {
         refresh();
         prepareAnimation();
         enableStopButton();
+        disableSettingsButton();
         disableTemperatureSlider();
         disableStartButton();
         animatables.forEach(Animatable::play);
@@ -105,11 +141,12 @@ public class AnimationMediator {
         refreshTemperatureSlider();
         enableTemperatureSlider();
         enableStartButton();
+        enableSettingsButton();
         disableStopButton();
     }
 
     private void prepareAnimation() {
-        double speed = 1.0;
+        double speed = dataModule.getSpeed();
 
         int stepIndex = 1;
         int timePoint = 1;
@@ -122,14 +159,18 @@ public class AnimationMediator {
             double roomBTemperature = dataModule.getRoomBTemperatures()[stepIndex];
             int timePointCopy = timePoint;
 
-            temperaturesChart.getAnimation().getKeyFrames().add(
+            temperaturesChartIndicator.getAnimation().getKeyFrames().add(
                     new KeyFrame(Duration.millis(timePoint * 1000 * speed), (ActionEvent e) -> {
                         temperatureAchievedCallback(timePointCopy, roomATemperature, roomBTemperature);
-                        updateInitialTemperatures(roomATemperature, roomBTemperature);
+                        setInitialTemperatures(roomATemperature, roomBTemperature);
                         incrementElapsedTimeCounter();
-                        updateElapsedTimeIndicatorValue();
+                        setElapsedTimeIndicatorValue();
                     })
             );
+
+            if (cutPrecision(dataModule.getInitialColderRoomTemperatures()[stepIndex]) == cutPrecision(desiredTemperature.get())) {
+                break;
+            }
 
             if (stepIndex < dataModule.getSteps()) {
                 stepIndex++;
@@ -139,14 +180,15 @@ public class AnimationMediator {
             }
         }
 
-        temperaturesChart.getAnimation().setOnFinished((ActionEvent event) -> finishAnimation());
+        temperaturesChartIndicator.getAnimation().setOnFinished((ActionEvent event) -> finishAnimation());
     }
 
-    private void updateInitialTemperatures(double roomATemperature, double roomBTemperature) {
-        dataModule.setInitialTemperatures(roomATemperature, roomBTemperature);
+    private void setInitialTemperatures(double roomATemperature, double roomBTemperature) {
+        dataModule.setRoomAInitialTemperature(roomATemperature);
+        dataModule.setRoomBInitialTemperature(roomBTemperature);
     }
 
-    private void updateElapsedTimeIndicatorValue() {
+    private void setElapsedTimeIndicatorValue() {
         elapsedTimeIndicator.setText(String.valueOf(elapsedTimeCounter.getElapsedTime()));
     }
 
@@ -157,7 +199,7 @@ public class AnimationMediator {
     private void temperatureAchievedCallback(int timePoint,
                                              double roomACurrentTemperature,
                                              double roomBCurrentTemperature) {
-        temperaturesChart.plot(
+        temperaturesChartIndicator.plot(
                 timePoint,
                 roomACurrentTemperature,
                 roomBCurrentTemperature
@@ -165,6 +207,14 @@ public class AnimationMediator {
 
         setRoomATemperatureIndicatorValue(roomACurrentTemperature);
         setRoomBTemperatureIndicatorValue(roomBCurrentTemperature);
+    }
+
+    public void enableSettingsButton() {
+        settingsButton.enable();
+    }
+
+    public void disableSettingsButton() {
+        settingsButton.disable();
     }
 
     public void enableStopButton() {
@@ -184,30 +234,40 @@ public class AnimationMediator {
     }
 
     public void setRoomATemperatureIndicatorValue(double temperature) {
-        roomATemperature.setText(String.format("%.1f", temperature));
+        roomATemperature.setText(String.valueOf(cutPrecision(temperature)));
     }
 
     public void setRoomBTemperatureIndicatorValue(double temperature) {
-        roomBTemperature.setText(String.format("%.1f", temperature));
+        roomBTemperature.setText(String.valueOf(cutPrecision(temperature)));
     }
 
     public void setDesiredTemperatureIndicatorValue(double temperature) {
-        desiredTemperatureIndicator.setText(String.format("%.1f", temperature));
+        desiredTemperatureIndicator.setText(String.valueOf(cutPrecision(temperature)));
     }
 
     public void refreshTemperatureSlider() {
-        temperatureSlider.refresh();
+        temperatureSliderInput.refresh();
     }
 
     public void enableTemperatureSlider() {
-        temperatureSlider.enable();
+        temperatureSliderInput.enable();
     }
 
     public void disableTemperatureSlider() {
-        temperatureSlider.disable();
+        temperatureSliderInput.disable();
     }
 
-    private double cutPrecision(double value) {
-        return Double.valueOf(String.format(Locale.ENGLISH, "%.1f", value));
+    public void displaySettingsWindow() {
+        settingsWindow.display();
     }
+
+    public void displayAlertBox(String title, String message) {
+        new AlertBoxWindow().display(title, message);
+    }
+
+    public DoubleProperty desiredTemperatureProperty() {
+        return desiredTemperature;
+    }
+
+
 }

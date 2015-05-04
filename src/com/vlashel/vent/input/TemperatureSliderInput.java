@@ -1,9 +1,8 @@
-package com.vlashel.vent;
+package com.vlashel.vent.input;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import com.vlashel.vent.DataModule;
+import com.vlashel.vent.Refreshable;
 import javafx.scene.control.Slider;
-
 import java.util.Locale;
 
 /**
@@ -11,11 +10,11 @@ import java.util.Locale;
  * @version 1.0
  * @since 01.05.2015.
  */
-public class TemperatureSlider extends Slider implements Refreshable {
+public class TemperatureSliderInput extends Slider implements Refreshable {
 
     private DataModule dataModule;
 
-    public TemperatureSlider(DataModule dataModule) {
+    public TemperatureSliderInput(DataModule dataModule) {
         this.dataModule = dataModule;
         this.setShowTickLabels(true);
         this.setShowTickMarks(true);
@@ -33,7 +32,6 @@ public class TemperatureSlider extends Slider implements Refreshable {
 
         this.setMin(lowestTemperature);
         this.setMax(maximumAchievableTemperature);
-
     }
 
     @Override

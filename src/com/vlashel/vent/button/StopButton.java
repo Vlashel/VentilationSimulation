@@ -1,5 +1,6 @@
-package com.vlashel.vent;
+package com.vlashel.vent.button;
 
+import com.vlashel.vent.AnimationMediator;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 

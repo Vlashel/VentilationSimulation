@@ -1,25 +1,27 @@
-package com.vlashel.vent;
+package com.vlashel.vent.indicator;
 
+import com.vlashel.vent.Animatable;
+import com.vlashel.vent.DataModule;
+import com.vlashel.vent.Refreshable;
 import javafx.animation.Timeline;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 
-public class TemperaturesChart extends LineChart<Number, Number> implements Animatable, Refreshable {
+public class TemperaturesChartIndicator extends LineChart<Number, Number> implements Animatable, Refreshable {
     private XYChart.Series<Number, Number> roomASeries;
     private XYChart.Series<Number, Number> roomBSeries;
     private Timeline timeline;
     private DataModule dataModule;
 
-    public TemperaturesChart(DataModule dataModule) {
+    public TemperaturesChartIndicator(DataModule dataModule) {
         super(new NumberAxis(), new NumberAxis());
 
         this.dataModule = dataModule;
-        this.getStylesheets().add(getClass().getResource("css/stylesheets.css").toExternalForm());
+        this.getStylesheets().add(getClass().getResource("../css/stylesheets.css").toExternalForm());
         this.setCreateSymbols(false);
 
         NumberAxis xAxis = (NumberAxis) this.getXAxis();
-        xAxis.setUpperBound(dataModule.getTotalTime());
         xAxis.setLabel("Time in seconds");
 
         NumberAxis yAxis = (NumberAxis) this.getYAxis();
@@ -56,7 +58,7 @@ public class TemperaturesChart extends LineChart<Number, Number> implements Anim
         roomBSeries.getData().clear();
         this.getData().clear();
         this.getData().clear();
-
+        // plotting first data at 0 point of time
         plot(0, dataModule.getRoomATemperatures()[0], dataModule.getRoomBTemperatures()[0]);
         init();
     }

@@ -6,7 +6,7 @@ package com.vlashel.vent;
  * @since 02.05.2015.
  */
 public class ElapsedTimeCounter {
-    private int elapsedTime = 0;
+    private volatile int elapsedTime = 0;
 
     public void increment() {
         elapsedTime++;
@@ -15,5 +15,4 @@ public class ElapsedTimeCounter {
     public int getElapsedTime() {
         return elapsedTime;
     }
-
 }

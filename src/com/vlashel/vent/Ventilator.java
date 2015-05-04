@@ -12,12 +12,12 @@ public class Ventilator extends ImageView implements Animatable {
     private double angle = 360;
 
     public Ventilator() {
-        super(new Image(Ventilator.class.getResource("images/propeller.png").toExternalForm()));
+        super(new Image(Ventilator.class.getResource("images/ventilator.png").toExternalForm()));
         createRotateTransition();
     }
 
     public Ventilator(double angle) {
-        super(new Image(Ventilator.class.getResource("images/propeller.png").toExternalForm()));
+        super(new Image(Ventilator.class.getResource("images/ventilator.png").toExternalForm()));
         this.angle = angle;
         createRotateTransition();
     }
