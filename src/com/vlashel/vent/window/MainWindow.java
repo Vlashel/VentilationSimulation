@@ -72,7 +72,7 @@ public class MainWindow extends Application {
                                 roomAVentilatorOut
                         ),
                         temperatureSliderInput,
-                        new HBox(new Label("Desired temperature: "), desiredTemperatureIndicator, new HBox(new Label("Time elapsed, in seconds: "), elapsedTimeIndicator)),
+                        new HBox(new Label("Desired temperature: "), desiredTemperatureIndicator, new HBox(new Label("Time left, in seconds: "), elapsedTimeIndicator)),
                         new HBox(
                                 new VBox(startButton, stopButton),
                                 new VBox(

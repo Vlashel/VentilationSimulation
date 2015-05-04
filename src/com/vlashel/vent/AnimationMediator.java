@@ -34,9 +34,18 @@ public class AnimationMediator {
     private ElapsedTimeIndicator elapsedTimeIndicator;
     private SettingsWindow settingsWindow;
     private List<Ventilator> ventilators;
-    private ElapsedTimeCounter elapsedTimeCounter = new ElapsedTimeCounter();
+    private TimeLeftCounter timeLeftCounter = new TimeLeftCounter();
     private List<Refreshable> refreshables = new ArrayList<>();
     private List<Animatable> animatables = new ArrayList<>();
+
+    public AnimationMediator() {
+        init();
+    }
+
+    private void init() {
+        timeLeftCounter = new TimeLeftCounter();
+        registerRefreshables(timeLeftCounter);
+    }
 
     private DoubleProperty desiredTemperature = new SimpleDoubleProperty();
 
@@ -154,6 +163,7 @@ public class AnimationMediator {
 
         while (timePoint <= dataModule.getTotalTime()
                 && cutPrecision(dataModule.getInitialColderRoomTemperatures()[stepIndex]) <= cutPrecision(desiredTemperature.get())) {
+            incrementElapsedTimeCounter();
 
             double roomATemperature = dataModule.getRoomATemperatures()[stepIndex];
             double roomBTemperature = dataModule.getRoomBTemperatures()[stepIndex];
@@ -163,7 +173,7 @@ public class AnimationMediator {
                     new KeyFrame(Duration.millis(timePoint * 1000 * speed), (ActionEvent e) -> {
                         temperatureAchievedCallback(timePointCopy, roomATemperature, roomBTemperature);
                         setInitialTemperatures(roomATemperature, roomBTemperature);
-                        incrementElapsedTimeCounter();
+                        decrementElapsedTimeCounter();
                         setElapsedTimeIndicatorValue();
                     })
             );
@@ -189,11 +199,15 @@ public class AnimationMediator {
     }
 
     private void setElapsedTimeIndicatorValue() {
-        elapsedTimeIndicator.setText(String.valueOf(elapsedTimeCounter.getElapsedTime()));
+        elapsedTimeIndicator.setText(String.valueOf(timeLeftCounter.getTimeLeft()));
     }
 
     private void incrementElapsedTimeCounter() {
-        elapsedTimeCounter.increment();
+        timeLeftCounter.increment();
+    }
+
+    private void decrementElapsedTimeCounter() {
+        timeLeftCounter.decrement();
     }
 
     private void temperatureAchievedCallback(int timePoint,
