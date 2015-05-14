@@ -1,6 +1,7 @@
 package com.vlashel.vent.input;
 
 import com.vlashel.vent.DataModule;
+import com.vlashel.vent.Helper;
 import com.vlashel.vent.Refreshable;
 import javafx.scene.control.Slider;
 import java.util.Locale;
@@ -25,10 +26,8 @@ public class TemperatureSliderInput extends Slider implements Refreshable {
     }
 
     private void init() {
-        double lowestTemperature = Double.
-                valueOf(String.format(Locale.ENGLISH, "%.1f", dataModule.getLowestTemperature()));
-        double maximumAchievableTemperature = Double.
-                valueOf(String.format(Locale.ENGLISH, "%.1f", dataModule.getMaximumAchievableTemperature()));
+        double lowestTemperature = Helper.cutPrecision(dataModule.getLowestTemperature());
+        double maximumAchievableTemperature = Helper.cutPrecision(dataModule.getMaximumAchievableTemperature());
 
         this.setMin(lowestTemperature);
         this.setMax(maximumAchievableTemperature);

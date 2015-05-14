@@ -9,7 +9,7 @@ import java.util.Locale;
  */
 public class Helper {
     public static double cutPrecision(double value) {
-        return cutPrecision(value, "%.1f");
+        return Math.round(value * 10.0) / 10.0;
     }
 
     public static double cutPrecision(double value, String format) {

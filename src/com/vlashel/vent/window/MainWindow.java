@@ -84,7 +84,7 @@ public class MainWindow extends Application {
                         )
                 )
         ));
-        primaryStage.setScene(new Scene(mainHBox, 850, 450));
+        primaryStage.setScene(new Scene(mainHBox, 850, 460));
         stopButton.disable();
     }
 

@@ -12,17 +12,17 @@ public class DataModule implements Refreshable {
     private double roomBVolume;
 
     public DataModule() {
-        totalTime = 1000; // seconds
-        steps = 1000;
+        totalTime = 500; // seconds
+        steps = 500;
         limit = 0;
-        speed = 1.0;
+        speed = 0.1;
         roomATemperatures = new double[steps + 1];
         roomBTemperatures = new double[steps + 1];
         roomATemperatures[0] = 35.0; // initial temperature in Celsius
         roomBTemperatures[0] = 11.0; // initial temperature in Celsius
-        volumetricFlowRate = 6.0; // volumetric flow rate in cubic meters per second
-        roomAVolume = 575.0; // cubic meters
-        roomBVolume = 520.0; // cubic meters
+        volumetricFlowRate = 0.12; // volumetric flow rate in cubic meters per second
+        roomAVolume = 250.0; // cubic meters
+        roomBVolume = 50.0; // cubic meters
 
         compute();
     }
@@ -44,7 +44,7 @@ public class DataModule implements Refreshable {
     }
 
     public double getMaximumAchievableTemperature() {
-        return getInitialColderRoomTemperatures()[limit];
+        return getInitialColderRoomTemperatures()[steps];
     }
 
     public void setVolumetricFlowRate(double volumetricFlowRate) {
