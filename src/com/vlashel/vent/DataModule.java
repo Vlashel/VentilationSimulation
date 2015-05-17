@@ -52,7 +52,7 @@ public class DataModule implements Refreshable {
     }
 
     public double getLowestTemperature() {
-        return Math.min(roomATemperatures.get(1), roomBTemperatures.get(1));
+        return roomATemperatures.size() > 1 ? Math.min(roomATemperatures.get(1), roomBTemperatures.get(1)) : roomATemperatures.get(0);
     }
 
     private void compute() {
