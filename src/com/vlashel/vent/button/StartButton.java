@@ -7,10 +7,8 @@ import javafx.scene.control.Button;
 public class StartButton extends Button {
 
     public StartButton(AnimationMediator animationMediator) {
-        this.setOnAction((ActionEvent event) -> {
-                    animationMediator.startAnimation();
-                }
-
+        this.setOnAction((ActionEvent event) ->
+                    animationMediator.startAnimation()
         );
         this.setText("Запустить");
     }
