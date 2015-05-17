@@ -95,6 +95,7 @@ public class AnimationMediator {
 
     public void registerElapsedTimeIndicator(ElapsedTimeIndicator elapsedTimeIndicator) {
         this.elapsedTimeIndicator = elapsedTimeIndicator;
+        registerRefreshables(elapsedTimeCounter);
     }
 
     public void registerRefreshables(Refreshable... refreshables) {
@@ -150,6 +151,7 @@ public class AnimationMediator {
     }
 
     public void makeTimeLeftPrediction() {
+        refreshElapsedTimeCounter();
         List<Double> colderRoom = dataModule.getInitialColderRoomTemperatures();
         int size = colderRoom.size();
         int counter = 1;
@@ -272,7 +274,7 @@ public class AnimationMediator {
         new AlertBoxWindow().display(title, message);
     }
 
-    public void refreshLeftTimeCounter() {
+    public void refreshElapsedTimeCounter() {
         elapsedTimeCounter.refresh();
     }
 

@@ -1,7 +1,6 @@
 package com.vlashel.vent.indicator;
 
 import com.vlashel.vent.Animatable;
-import com.vlashel.vent.AnimationMediator;
 import com.vlashel.vent.DataModule;
 import com.vlashel.vent.Refreshable;
 import javafx.animation.Timeline;
@@ -18,7 +17,7 @@ public class TemperaturesChartIndicator extends LineChart<Number, Number> implem
     public TemperaturesChartIndicator(DataModule dataModule) {
         super(new NumberAxis(), new NumberAxis());
         this.dataModule = dataModule;
-        this.getStylesheets().add(getClass().getResource("../css/stylesheets.css").toExternalForm());
+      //  this.getStylesheets().add(getClass().getResource("../css/stylesheets.css").toExternalForm());
         this.setCreateSymbols(false);
 
         NumberAxis xAxis = (NumberAxis) this.getXAxis();

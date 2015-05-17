@@ -19,8 +19,9 @@ import javafx.stage.Stage;
 public class MainWindow extends Application {
 
     private void init(Stage primaryStage) {
-        AnimationMediator animationMediator = new AnimationMediator();
         DataModule dataModule = new DataModule();
+
+        AnimationMediator animationMediator = new AnimationMediator();
         TemperaturesChartIndicator chart = new TemperaturesChartIndicator(dataModule);
         Ventilator roomAVentilatorIn = new Ventilator();
         Ventilator roomAVentilatorOut = new Ventilator(-360);
@@ -38,6 +39,7 @@ public class MainWindow extends Application {
         VolumetricFlowRateIndicator volumetricFlowRateIndicator = new VolumetricFlowRateIndicator(dataModule);
 
         animationMediator.registerDataModule(dataModule);
+
         animationMediator.registerTemperaturesChart(chart);
         animationMediator.registerVentilators(
                 roomAVentilatorIn,
