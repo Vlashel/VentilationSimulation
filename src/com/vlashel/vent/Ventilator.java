@@ -1,7 +1,6 @@
 package com.vlashel.vent;
 
 import javafx.animation.*;
-import javafx.event.ActionEvent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;

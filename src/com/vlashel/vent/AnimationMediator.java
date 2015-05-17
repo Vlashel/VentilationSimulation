@@ -16,6 +16,7 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import static com.vlashel.vent.Helper.*;
 
 public class AnimationMediator {
@@ -28,13 +29,9 @@ public class AnimationMediator {
     private RoomATemperatureIndicator roomATemperature;
     private RoomBTemperatureIndicator roomBTemperature;
     private DesiredTemperatureIndicator desiredTemperatureIndicator;
-    private RoomAVolumeIndicator roomAVolumeIndicator;
-    private RoomBVolumeIndicator roomBVolumeIndicator;
-    private VolumetricFlowRateIndicator volumetricFlowRateIndicator;
     private ElapsedTimeIndicator elapsedTimeIndicator;
     private SettingsWindow settingsWindow;
-    private List<Ventilator> ventilators;
-    private TimeLeftCounter timeLeftCounter = new TimeLeftCounter();
+    private ElapsedTimeCounter elapsedTimeCounter = new ElapsedTimeCounter();
     private List<Refreshable> refreshables = new ArrayList<>();
     private List<Animatable> animatables = new ArrayList<>();
 
@@ -43,14 +40,13 @@ public class AnimationMediator {
     }
 
     private void init() {
-        timeLeftCounter = new TimeLeftCounter();
-        registerRefreshables(timeLeftCounter);
+        elapsedTimeCounter = new ElapsedTimeCounter();
+        registerRefreshables(elapsedTimeCounter);
     }
 
     private DoubleProperty desiredTemperature = new SimpleDoubleProperty();
 
     public void registerVentilators(Ventilator... ventilators) {
-        this.ventilators = Arrays.asList(ventilators);
         registerAnimatables(ventilators);
     }
 
@@ -117,17 +113,14 @@ public class AnimationMediator {
     }
 
     public void registerRoomAVolumeIndicator(RoomAVolumeIndicator roomAVolumeIndicator) {
-        this.roomAVolumeIndicator = roomAVolumeIndicator;
         registerRefreshables(roomAVolumeIndicator);
     }
 
     public void registerRoomBVolumeIndicator(RoomBVolumeIndicator roomBVolumeIndicator) {
-        this.roomBVolumeIndicator = roomBVolumeIndicator;
         registerRefreshables(roomBVolumeIndicator);
     }
 
     public void registerVolumetricFlowRateIndicator(VolumetricFlowRateIndicator volumetricFlowRateIndicator) {
-        this.volumetricFlowRateIndicator = volumetricFlowRateIndicator;
         registerRefreshables(volumetricFlowRateIndicator);
     }
 
@@ -160,7 +153,7 @@ public class AnimationMediator {
         List<Double> colderRoom = dataModule.getInitialColderRoomTemperatures();
         int size = colderRoom.size();
         int counter = 1;
-        while (counter < size && cutPrecision(colderRoom.get(counter)) <= cutPrecision(desiredTemperature.get())) {
+        while (counter < size && pack(colderRoom.get(counter)) <= pack(desiredTemperature.get())) {
             incrementElapsedTimeCounter();
             counter++;
         }
@@ -170,13 +163,12 @@ public class AnimationMediator {
     public void prepareAnimation() {
         double speed = dataModule.getSpeed();
 
-        int timePoint = 1;
         List<Double> roomATemp = dataModule.getRoomATemperatures();
         List<Double> roomBTemp = dataModule.getRoomBTemperatures();
 
-        int limit = timeLeftCounter.getTimeLeft();
+        int limit = elapsedTimeCounter.getTimeLeft();
 
-        while (timePoint <= limit) {
+        for (int timePoint = 1; timePoint <= limit; timePoint++) {
             double roomATemperature = roomATemp.get(timePoint);
             double roomBTemperature = roomBTemp.get(timePoint);
             int timePointCopy = timePoint;
@@ -189,10 +181,9 @@ public class AnimationMediator {
                         setElapsedTimeIndicatorValue();
                     })
             );
-            timePoint++;
         }
         temperaturesChartIndicator.getAnimation().setOnFinished((ActionEvent event) -> finishAnimation());
-        temperaturesChartIndicator.setTimeUpperBound(timeLeftCounter.getTimeLeft());
+        temperaturesChartIndicator.setTimeUpperBound(elapsedTimeCounter.getTimeLeft());
     }
 
     private void setInitialTemperatures(double roomATemperature, double roomBTemperature) {
@@ -201,15 +192,15 @@ public class AnimationMediator {
     }
 
     private void setElapsedTimeIndicatorValue() {
-        elapsedTimeIndicator.setElapsedTime(timeLeftCounter.getTimeLeft());
+        elapsedTimeIndicator.setElapsedTime(elapsedTimeCounter.getTimeLeft());
     }
 
     private void incrementElapsedTimeCounter() {
-        timeLeftCounter.increment();
+        elapsedTimeCounter.increment();
     }
 
     private void decrementElapsedTimeCounter() {
-        timeLeftCounter.decrement();
+        elapsedTimeCounter.decrement();
     }
 
     private void temperatureAchievedCallback(int timePoint,
@@ -250,15 +241,15 @@ public class AnimationMediator {
     }
 
     public void setRoomATemperatureIndicatorValue(double temperature) {
-        roomATemperature.setText(String.valueOf(cutPrecision(temperature)));
+        roomATemperature.setText(String.valueOf(pack(temperature)));
     }
 
     public void setRoomBTemperatureIndicatorValue(double temperature) {
-        roomBTemperature.setText(String.valueOf(cutPrecision(temperature)));
+        roomBTemperature.setText(String.valueOf(pack(temperature)));
     }
 
     public void setDesiredTemperatureIndicatorValue(double temperature) {
-        desiredTemperatureIndicator.setText(String.valueOf(cutPrecision(temperature)));
+        desiredTemperatureIndicator.setText(String.valueOf(pack(temperature)));
     }
 
     public void refreshTemperatureSlider() {
@@ -281,12 +272,8 @@ public class AnimationMediator {
         new AlertBoxWindow().display(title, message);
     }
 
-    public DoubleProperty desiredTemperatureProperty() {
-        return desiredTemperature;
-    }
-
     public void refreshLeftTimeCounter() {
-        timeLeftCounter.refresh();
+        elapsedTimeCounter.refresh();
     }
 
     private void refreshDataModule() {

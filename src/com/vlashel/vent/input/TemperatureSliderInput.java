@@ -4,13 +4,7 @@ import com.vlashel.vent.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Slider;
-import java.util.Locale;
 
-/**
- * @author Vlashel
- * @version 1.0
- * @since 01.05.2015.
- */
 public class TemperatureSliderInput extends Slider implements Refreshable {
 
     private DataModule dataModule;
@@ -34,8 +28,8 @@ public class TemperatureSliderInput extends Slider implements Refreshable {
     }
 
     private void init() {
-        double lowestTemperature = Helper.cutPrecision(dataModule.getLowestTemperature());
-        double maximumAchievableTemperature = Helper.cutPrecision(dataModule.getMaximumAchievableTemperature());
+        double lowestTemperature = Helper.pack(dataModule.getLowestTemperature());
+        double maximumAchievableTemperature = Helper.pack(dataModule.getMaximumAchievableTemperature());
 
         this.setMin(lowestTemperature);
         this.setMax(maximumAchievableTemperature);

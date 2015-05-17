@@ -3,22 +3,15 @@ package com.vlashel.vent.window;
 import com.vlashel.vent.AnimationMediator;
 import com.vlashel.vent.DataModule;
 import com.vlashel.vent.input.*;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-/**
- * @author Vlashel
- * @version 1.0
- * @since 03.05.2015.
- */
 public class SettingsWindow {
 
     private DataModule dataModule;

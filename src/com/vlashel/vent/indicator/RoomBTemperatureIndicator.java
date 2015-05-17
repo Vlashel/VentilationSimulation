@@ -7,11 +7,6 @@ import javafx.scene.text.Font;
 
 import java.util.Locale;
 
-/**
- * @author Vlashel
- * @version 1.0
- * @since 04.05.2015.
- */
 public class RoomBTemperatureIndicator extends Label implements Refreshable {
     private DataModule dataModule;
 

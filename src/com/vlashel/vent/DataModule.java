@@ -72,7 +72,7 @@ public class DataModule implements Refreshable {
         int roomBend = roomBTemperatures.size() - 1;
 
         double dt = 1;
-        while (!Helper.cutPrecision(roomATemperatures.get(roomAend)).equals(Helper.cutPrecision(roomBTemperatures.get(roomBend)))) {
+        while (!Helper.pack(roomATemperatures.get(roomAend)).equals(Helper.pack(roomBTemperatures.get(roomBend)))) {
             double dTbdt = (volumetricFlowRate / roomBVolume) * (roomATemperatures.get(roomAend) - roomBTemperatures.get(roomBend));
             double dTadt = (volumetricFlowRate / roomAVolume) * (roomBTemperatures.get(roomAend) - roomATemperatures.get(roomBend));
 

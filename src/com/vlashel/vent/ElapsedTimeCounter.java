@@ -1,17 +1,9 @@
 package com.vlashel.vent;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-
-/**
- * @author Vlashel
- * @version 1.0
- * @since 02.05.2015.
- */
-public class TimeLeftCounter implements Refreshable {
+public class ElapsedTimeCounter implements Refreshable {
     private volatile int timeLeft;
 
-    public TimeLeftCounter() {
+    public ElapsedTimeCounter() {
         init();
     }
 

@@ -5,11 +5,6 @@ import com.vlashel.vent.DataModule;
 import com.vlashel.vent.Refreshable;
 import javafx.scene.control.Label;
 
-/**
- * @author Vlashel
- * @version 1.0
- * @since 03.05.2015.
- */
 public class RoomAVolumeIndicator extends Label implements Refreshable {
 
     private DataModule dataModule;

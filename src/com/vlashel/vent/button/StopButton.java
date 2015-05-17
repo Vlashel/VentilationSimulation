@@ -7,9 +7,7 @@ import javafx.scene.control.Button;
 public class StopButton extends Button {
     public StopButton(AnimationMediator animationMediator) {
         this.setOnAction(
-                (ActionEvent event) -> {
-                    animationMediator.finishAnimation();
-                }
+                (ActionEvent event) -> animationMediator.finishAnimation()
         );
         this.setText("Остановить");
     }
