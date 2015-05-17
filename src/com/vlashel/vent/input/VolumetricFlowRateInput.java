@@ -14,6 +14,6 @@ public class VolumetricFlowRateInput extends TextField {
     }
 
     private void init() {
-        this.setText(String.valueOf(Helper.pack(dataModule.getVolumetricFlowRate())));
+        this.setText(String.valueOf(dataModule.getVolumetricFlowRate()));
     }
 }

@@ -11,6 +11,7 @@ import com.vlashel.vent.input.TemperatureSliderInput;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -100,6 +101,8 @@ public class MainWindow extends Application {
     public void start(Stage primaryStage) throws Exception {
         init(primaryStage);
         primaryStage.setResizable(false);
+        primaryStage.setTitle("Thermocycle");
+        primaryStage.getIcons().add(new Image(getClass().getResource("icon-png.png").toExternalForm()));
         primaryStage.show();
     }
 

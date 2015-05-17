@@ -41,7 +41,6 @@ public class AnimationMediator {
 
     private void init() {
         elapsedTimeCounter = new ElapsedTimeCounter();
-        registerRefreshables(elapsedTimeCounter);
     }
 
     private DoubleProperty desiredTemperature = new SimpleDoubleProperty();
@@ -95,7 +94,7 @@ public class AnimationMediator {
 
     public void registerElapsedTimeIndicator(ElapsedTimeIndicator elapsedTimeIndicator) {
         this.elapsedTimeIndicator = elapsedTimeIndicator;
-      //  registerRefreshables(elapsedTimeCounter);
+
     }
 
     public void registerRefreshables(Refreshable... refreshables) {

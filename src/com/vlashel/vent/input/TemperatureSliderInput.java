@@ -16,15 +16,16 @@ public class TemperatureSliderInput extends Slider implements Refreshable {
         this.setMajorTickUnit(1);
         this.setMaxWidth(355);
 
+        init();
+
+        animationMediator.makeTimeLeftPrediction();
+
         this.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                animationMediator.refreshElapsedTimeCounter();
                 animationMediator.makeTimeLeftPrediction();
             }
         });
-
-        init();
     }
 
     private void init() {
