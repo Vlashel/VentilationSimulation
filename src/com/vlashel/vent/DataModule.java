@@ -1,12 +1,13 @@
 package com.vlashel.vent;
 
+import java.util.*;
+
 public class DataModule implements Refreshable {
     private int totalTime;
     private int steps;
-    private int limit;
     private double speed;
-    private double[] roomATemperatures;
-    private double[] roomBTemperatures;
+    private List<Double> roomATemperatures;
+    private List<Double> roomBTemperatures;
     private double volumetricFlowRate;
     private double roomAVolume;
     private double roomBVolume;
@@ -14,13 +15,12 @@ public class DataModule implements Refreshable {
     public DataModule() {
         totalTime = 500; // seconds
         steps = 500;
-        limit = 0;
         speed = 0.1;
-        roomATemperatures = new double[steps + 1];
-        roomBTemperatures = new double[steps + 1];
-        roomATemperatures[0] = 35.0; // initial temperature in Celsius
-        roomBTemperatures[0] = 11.0; // initial temperature in Celsius
-        volumetricFlowRate = 0.12; // volumetric flow rate in cubic meters per second
+        roomATemperatures = new ArrayList<>();
+        roomBTemperatures = new ArrayList<>();
+        roomATemperatures.add(24.0); // initial temperature in Celsius
+        roomBTemperatures.add(16.0); // initial temperature in Celsius
+        volumetricFlowRate = 0.2; // volumetric flow rate in cubic meters per second
         roomAVolume = 250.0; // cubic meters
         roomBVolume = 50.0; // cubic meters
 
@@ -35,16 +35,16 @@ public class DataModule implements Refreshable {
         return steps;
     }
 
-    public double[] getRoomATemperatures() {
+    public List<Double> getRoomATemperatures() {
         return roomATemperatures;
     }
 
-    public double[] getRoomBTemperatures() {
+    public List<Double> getRoomBTemperatures() {
         return roomBTemperatures;
     }
 
     public double getMaximumAchievableTemperature() {
-        return getInitialColderRoomTemperatures()[steps];
+        return getInitialColderRoomTemperatures().get(getInitialColderRoomTemperatures().size() - 1);
     }
 
     public void setVolumetricFlowRate(double volumetricFlowRate) {
@@ -60,63 +60,57 @@ public class DataModule implements Refreshable {
     }
 
     public double getHighestTemperature() {
-        return Math.max(roomATemperatures[0], roomBTemperatures[0]);
+        return Math.max(roomATemperatures.get(0), roomBTemperatures.get(0));
     }
 
     public double getLowestTemperature() {
-        return Math.min(roomATemperatures[0], roomBTemperatures[0]);
+        return Math.min(roomATemperatures.get(0), roomBTemperatures.get(0));
     }
 
     private void compute() {
-        double dt = totalTime / steps;
-        for (int i = 0; i < steps; i++) {
-            double dTbdt = (volumetricFlowRate / roomBVolume) * (roomATemperatures[i] - roomBTemperatures[i]);
-            double dTadt = (volumetricFlowRate / roomAVolume) * (roomBTemperatures[i] - roomATemperatures[i]);
+        int roomAend = roomATemperatures.size() - 1;
+        int roomBend = roomBTemperatures.size() - 1;
 
-            roomBTemperatures[i + 1] = roomBTemperatures[i] + dTbdt * dt;
-            roomATemperatures[i + 1] = roomATemperatures[i] + dTadt * dt;
+        double dt = 1;
+        while (!Helper.cutPrecision(roomATemperatures.get(roomAend)).equals(Helper.cutPrecision(roomBTemperatures.get(roomBend)))) {
+            double dTbdt = (volumetricFlowRate / roomBVolume) * (roomATemperatures.get(roomAend) - roomBTemperatures.get(roomBend));
+            double dTadt = (volumetricFlowRate / roomAVolume) * (roomBTemperatures.get(roomAend) - roomATemperatures.get(roomBend));
+
+            roomBTemperatures.add(roomBTemperatures.get(roomBend) + dTbdt * dt);
+            roomATemperatures.add(roomATemperatures.get(roomAend) + dTadt * dt);
+
+            roomAend = roomATemperatures.size() - 1;
+            roomBend = roomATemperatures.size() - 1;
         }
-        findLimit();
+        totalTime = roomATemperatures.size();
         print();
     }
 
-    private void findLimit() {
-        double[] colderRoomTemperatures = getInitialColderRoomTemperatures();
-
-        for (int i = 0; i < colderRoomTemperatures.length - 1; i++) {
-            double temp = Helper.cutPrecision(colderRoomTemperatures[i], "%.2f");
-            double nextTemp = Helper.cutPrecision(colderRoomTemperatures[i + 1], "%.2f");
-
-            if (temp == nextTemp) {
-                limit = i;
-                System.out.println("Limit is: " + limit);
-                break;
-            }
-        }
-    }
 
     public void setRoomAInitialTemperature(double roomATemperature) {
-        this.roomATemperatures[0] = roomATemperature;
+        this.roomATemperatures.clear();
+        this.roomATemperatures.add(roomATemperature);
     }
 
     public void setRoomBInitialTemperature(double roomBTemperature) {
-        this.roomBTemperatures[0] = roomBTemperature;
+        this.roomBTemperatures.clear();
+        this.roomBTemperatures.add(roomBTemperature);
     }
 
     public double getRoomAInitialTemperature() {
-        return this.roomATemperatures[0];
+        return this.roomATemperatures.get(0);
     }
 
     public double getRoomBInitialTemperature() {
-        return this.roomBTemperatures[0];
+        return this.roomBTemperatures.get(0);
     }
 
-    public double[] getInitialHotterRoomTemperatures() {
-        return roomATemperatures[0] > roomBTemperatures[0] ? roomATemperatures : roomBTemperatures;
+    public List<Double> getInitialHotterRoomTemperatures() {
+        return roomATemperatures.get(0) > roomBTemperatures.get(0) ? roomATemperatures : roomBTemperatures;
     }
 
-    public double[] getInitialColderRoomTemperatures() {
-        return roomATemperatures[0] < roomBTemperatures[0] ? roomATemperatures : roomBTemperatures;
+    public List<Double> getInitialColderRoomTemperatures() {
+        return roomATemperatures.get(0) < roomBTemperatures.get(0) ? roomATemperatures : roomBTemperatures;
     }
 
     public double getVolumetricFlowRate() {
@@ -129,10 +123,6 @@ public class DataModule implements Refreshable {
 
     public double getRoomBVolume() {
         return roomBVolume;
-    }
-
-    public int getLimit() {
-        return limit;
     }
 
     public double getSpeed() {
@@ -149,22 +139,12 @@ public class DataModule implements Refreshable {
     }
 
     private void print() {
-        double timePoint = 0.0;
-        int stepIndex = 0;
-        double dt = totalTime / steps;
-
-        while (timePoint <= totalTime) {
-            System.out.println("Temperature in room A at time: " + timePoint + " is: " + roomATemperatures[stepIndex]);
-            System.out.println("Temperature in room B at time: " + timePoint + " is: " + roomBTemperatures[stepIndex]);
+        int timePoint = 0;
+        while (timePoint < roomBTemperatures.size() && timePoint < roomATemperatures.size()) {
+            System.out.println("Temperature in room A at time: " + timePoint + " is: " + roomATemperatures.get(timePoint));
+            System.out.println("Temperature in room B at time: " + timePoint + " is: " + roomBTemperatures.get(timePoint));
+            timePoint++;
             System.out.println();
-
-            if (stepIndex < steps) {
-                stepIndex++;
-            }
-
-            for (double i = 0.0; i < dt; i++) {
-                timePoint++;
-            }
         }
     }
 }

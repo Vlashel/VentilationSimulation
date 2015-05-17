@@ -13,8 +13,8 @@ public class RoomATemperatureIndicator extends Label implements Refreshable {
 
     public RoomATemperatureIndicator(DataModule dataModule) {
         this.dataModule = dataModule;
-        this.setFont(Font.font(20));
-        this.setMinSize(50, 50);
+        this.setFont(Font.font(30));
+        this.setMinSize(110, 70);
 
         init();
     }

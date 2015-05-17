@@ -133,6 +133,7 @@ public class AnimationMediator {
 
     public void refresh() {
         this.refreshables.forEach(Refreshable::refresh);
+        makeTimeLeftPrediction();
     }
 
     public void startAnimation() {
@@ -147,6 +148,7 @@ public class AnimationMediator {
 
     public void finishAnimation() {
         animatables.forEach(Animatable::stop);
+        refreshDataModule();
         refreshTemperatureSlider();
         enableTemperatureSlider();
         enableStartButton();
@@ -154,19 +156,29 @@ public class AnimationMediator {
         disableStopButton();
     }
 
-    private void prepareAnimation() {
+    public void makeTimeLeftPrediction() {
+        List<Double> colderRoom = dataModule.getInitialColderRoomTemperatures();
+        int size = colderRoom.size();
+        int counter = 1;
+        while (counter < size && cutPrecision(colderRoom.get(counter)) <= cutPrecision(desiredTemperature.get())) {
+            incrementElapsedTimeCounter();
+            counter++;
+        }
+        setElapsedTimeIndicatorValue();
+    }
+
+    public void prepareAnimation() {
         double speed = dataModule.getSpeed();
 
-        int stepIndex = 1;
         int timePoint = 1;
-        double dt = dataModule.getTotalTime() / dataModule.getSteps();
+        List<Double> roomATemp = dataModule.getRoomATemperatures();
+        List<Double> roomBTemp = dataModule.getRoomBTemperatures();
 
-        while (timePoint <= dataModule.getTotalTime()
-                && cutPrecision(dataModule.getInitialColderRoomTemperatures()[stepIndex]) <= cutPrecision(desiredTemperature.get())) {
-            incrementElapsedTimeCounter();
+        int limit = timeLeftCounter.getTimeLeft();
 
-            double roomATemperature = dataModule.getRoomATemperatures()[stepIndex];
-            double roomBTemperature = dataModule.getRoomBTemperatures()[stepIndex];
+        while (timePoint <= limit) {
+            double roomATemperature = roomATemp.get(timePoint);
+            double roomBTemperature = roomBTemp.get(timePoint);
             int timePointCopy = timePoint;
 
             temperaturesChartIndicator.getAnimation().getKeyFrames().add(
@@ -177,20 +189,10 @@ public class AnimationMediator {
                         setElapsedTimeIndicatorValue();
                     })
             );
-
-            if (cutPrecision(dataModule.getInitialColderRoomTemperatures()[stepIndex]) == cutPrecision(desiredTemperature.get())) {
-                break;
-            }
-
-            if (stepIndex < dataModule.getSteps()) {
-                stepIndex++;
-            }
-            for (int i = 0; i < dt; i++) {
-                timePoint++;
-            }
+            timePoint++;
         }
-
         temperaturesChartIndicator.getAnimation().setOnFinished((ActionEvent event) -> finishAnimation());
+        temperaturesChartIndicator.setTimeUpperBound(timeLeftCounter.getTimeLeft());
     }
 
     private void setInitialTemperatures(double roomATemperature, double roomBTemperature) {
@@ -199,7 +201,7 @@ public class AnimationMediator {
     }
 
     private void setElapsedTimeIndicatorValue() {
-        elapsedTimeIndicator.setText(String.valueOf(timeLeftCounter.getTimeLeft()));
+        elapsedTimeIndicator.setElapsedTime(timeLeftCounter.getTimeLeft());
     }
 
     private void incrementElapsedTimeCounter() {
@@ -283,5 +285,12 @@ public class AnimationMediator {
         return desiredTemperature;
     }
 
+    public void refreshLeftTimeCounter() {
+        timeLeftCounter.refresh();
+    }
+
+    private void refreshDataModule() {
+        dataModule.refresh();
+    }
 
 }

@@ -10,7 +10,7 @@ import javafx.scene.control.Button;
  */
 public class SettingsButton extends Button {
     public SettingsButton(AnimationMediator animationMediator) {
-        this.setText("Settings...");
+        this.setText("Настройки...");
         this.setOnAction(e ->
                 animationMediator.displaySettingsWindow()
         );

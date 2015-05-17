@@ -31,7 +31,7 @@ public class MainWindow extends Application {
         RoomBTemperatureIndicator roomBTemperatureIndicator = new RoomBTemperatureIndicator(dataModule);
         DesiredTemperatureIndicator desiredTemperatureIndicator = new DesiredTemperatureIndicator();
         ElapsedTimeIndicator elapsedTimeIndicator = new ElapsedTimeIndicator();
-        TemperatureSliderInput temperatureSliderInput = new TemperatureSliderInput(dataModule);
+
         SettingsWindow settingsWindow = new SettingsWindow(animationMediator, dataModule);
         RoomAVolumeIndicator roomAVolumeIndicator = new RoomAVolumeIndicator(dataModule);
         RoomBVolumeIndicator roomBVolumeIndicator = new RoomBVolumeIndicator(dataModule);
@@ -43,6 +43,8 @@ public class MainWindow extends Application {
                 roomAVentilatorIn,
                 roomAVentilatorOut
         );
+        animationMediator.registerElapsedTimeIndicator(elapsedTimeIndicator);
+        TemperatureSliderInput temperatureSliderInput = new TemperatureSliderInput(dataModule, animationMediator);
         animationMediator.registerStartButton(startButton);
         animationMediator.registerStopButton(stopButton);
         animationMediator.registerSettingsButton(settingsButton);
@@ -50,7 +52,6 @@ public class MainWindow extends Application {
         animationMediator.registerRoomBTemperatureIndicator(roomBTemperatureIndicator);
         animationMediator.registerTemperatureSlider(temperatureSliderInput);
         animationMediator.registerDesiredTemperatureIndicator(desiredTemperatureIndicator);
-        animationMediator.registerElapsedTimeIndicator(elapsedTimeIndicator);
         animationMediator.registerRoomAVolumeIndicator(roomAVolumeIndicator);
         animationMediator.registerRoomBVolumeIndicator(roomBVolumeIndicator);
         animationMediator.registerVolumetricFlowRateIndicator(volumetricFlowRateIndicator);
@@ -61,30 +62,30 @@ public class MainWindow extends Application {
                 new VBox(
                         new HBox(
                                 new VBox(
-                                        new HBox(new Label("Room A current temperature: "), roomATemperatureIndicator)
+                                        new HBox(new Label("Температура в комнате А: "), roomATemperatureIndicator)
                                 ),
                                 roomAVentilatorIn
                         ),
                         new HBox(
                                 new VBox(
-                                        new HBox(new Label("Room B current temperature: "), roomBTemperatureIndicator)
+                                        new HBox(new Label("Температура в комнате Б: "), roomBTemperatureIndicator)
                                 ),
                                 roomAVentilatorOut
                         ),
                         temperatureSliderInput,
-                        new HBox(new Label("Desired temperature: "), desiredTemperatureIndicator, new HBox(new Label("Time left, in seconds: "), elapsedTimeIndicator)),
+                        new HBox(new HBox(new Label("Желаемая температура: "), desiredTemperatureIndicator), new HBox(new Label("Оставшееся время: "), elapsedTimeIndicator)),
                         new HBox(
                                 new VBox(startButton, stopButton),
                                 new VBox(
-                                        new HBox(new Label("Volumetric flow rate, in m3 per sec: "), volumetricFlowRateIndicator),
-                                        new HBox(new Label("Room A volume, in m3: "), roomAVolumeIndicator),
-                                        new HBox(new Label("Room B volume, in m3: "), roomBVolumeIndicator),
+                                        new HBox(new Label("Объемный расход в м3/сек: "), volumetricFlowRateIndicator),
+                                        new HBox(new Label("Объем комнаты А, в м3: "), roomAVolumeIndicator),
+                                        new HBox(new Label("Объем комнаты Б, в м3: "), roomBVolumeIndicator),
                                         settingsButton
                                 )
                         )
                 )
         ));
-        primaryStage.setScene(new Scene(mainHBox, 850, 460));
+        primaryStage.setScene(new Scene(mainHBox, 910, 460));
         stopButton.disable();
     }
 

@@ -8,7 +8,7 @@ import java.util.Locale;
  * @since 04.05.2015.
  */
 public class Helper {
-    public static double cutPrecision(double value) {
+    public static Double cutPrecision(double value) {
         return Math.round(value * 10.0) / 10.0;
     }
 

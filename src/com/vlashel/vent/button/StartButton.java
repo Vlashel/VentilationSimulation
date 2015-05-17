@@ -12,7 +12,7 @@ public class StartButton extends Button {
                 }
 
         );
-        this.setText("Start");
+        this.setText("Запустить");
     }
 
     public void enable() {

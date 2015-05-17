@@ -32,7 +32,7 @@ public class SettingsWindow {
     public void display() {
         Stage window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
-        window.setTitle("Settings");
+        window.setTitle("Настройки");
 
         RoomATemperatureInput roomATemperatureInput = new RoomATemperatureInput(dataModule);
         RoomBTemperatureInput roomBTemperatureInput = new RoomBTemperatureInput(dataModule);
@@ -45,12 +45,12 @@ public class SettingsWindow {
         SimulationSpeedInput simulationSpeedInput = new SimulationSpeedInput(dataModule);
 
         VBox labels = new VBox(
-                new Label("Room A temperature, in Celsius:"),
-                new Label("Room B temperature, in Celsius:"),
-                new Label("Room A volume, in m3:"),
-                new Label("Room B volume, in m3:"),
-                new Label("Volumetric flow rate, in m3 per second:"),
-                new Label("Simulation speed:")
+                new Label("Температура в комнате А, по Цельсию:"),
+                new Label("Температура в комнате Б, по Цельсию:"),
+                new Label("Объем комнаты А, в м3:"),
+                new Label("Объем комнаты Б, в м3:"),
+                new Label("Объемный расход, в м3/сек:"),
+                new Label("Скорость симуляции:")
         );
 
         labels.setSpacing(10);
@@ -64,7 +64,7 @@ public class SettingsWindow {
                 simulationSpeedInput
         );
 
-        Button saveButton = new Button("Save");
+        Button saveButton = new Button("Сохранить");
         saveButton.setOnAction(e -> {
             dataModule.setRoomAInitialTemperature(Double.valueOf(roomATemperatureInput.getText()));
             dataModule.setRoomBInitialTemperature(Double.valueOf(roomBTemperatureInput.getText()));

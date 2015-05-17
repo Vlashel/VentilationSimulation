@@ -12,8 +12,16 @@ import javafx.scene.text.Font;
 public class ElapsedTimeIndicator extends Label {
 
     public ElapsedTimeIndicator() {
-        this.setFont(Font.font(20));
+        this.setFont(Font.font(30));
         this.setMinSize(50, 50);
-        this.setText("0");
+    }
+
+    public void setElapsedTime(int time) {
+
+        int hours = (time / 60) / 60;
+        int minutes = (time - (hours * 60) * 60) / 60;
+        int seconds = time - minutes * 60;
+
+        this.setText(String.format("%02d:%02d:%02d" , hours, minutes, seconds));
     }
 }

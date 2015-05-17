@@ -1,5 +1,8 @@
 package com.vlashel.vent;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+
 /**
  * @author Vlashel
  * @version 1.0

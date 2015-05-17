@@ -1,6 +1,7 @@
 package com.vlashel.vent.indicator;
 
 import com.vlashel.vent.Animatable;
+import com.vlashel.vent.AnimationMediator;
 import com.vlashel.vent.DataModule;
 import com.vlashel.vent.Refreshable;
 import javafx.animation.Timeline;
@@ -16,27 +17,26 @@ public class TemperaturesChartIndicator extends LineChart<Number, Number> implem
 
     public TemperaturesChartIndicator(DataModule dataModule) {
         super(new NumberAxis(), new NumberAxis());
-
         this.dataModule = dataModule;
         this.getStylesheets().add(getClass().getResource("../css/stylesheets.css").toExternalForm());
         this.setCreateSymbols(false);
 
         NumberAxis xAxis = (NumberAxis) this.getXAxis();
-        xAxis.setLabel("Time in seconds");
+        xAxis.setAutoRanging(false);
+        xAxis.setLabel("Время в секундах");
 
         NumberAxis yAxis = (NumberAxis) this.getYAxis();
-        yAxis.setUpperBound(Math.floor(dataModule.getHighestTemperature()) + 10);
         yAxis.setAutoRanging(false);
-        yAxis.setLabel("Temperature in Celsius");
+        yAxis.setLabel("Температуры по цельсию");
 
         roomASeries = new XYChart.Series<>();
         roomBSeries = new XYChart.Series<>();
 
-        roomASeries.setName("Room A");
-        roomBSeries.setName("Room B");
+        roomASeries.setName("Комната А");
+        roomBSeries.setName("Комната Б");
 
         this.setAnimated(false);
-        this.setTitle("Temperatures change over time");
+        this.setTitle("Изменение температур во времени");
 
         init();
     }
@@ -45,6 +45,8 @@ public class TemperaturesChartIndicator extends LineChart<Number, Number> implem
         this.getData().add(roomASeries);
         this.getData().add(roomBSeries);
         timeline = new Timeline();
+
+        ((NumberAxis)this.getYAxis()).setUpperBound(Math.floor(dataModule.getHighestTemperature()) + 10);
     }
 
     public void plot(int timePoint, double roomATemperature, double roomBTemperature) {
@@ -59,8 +61,12 @@ public class TemperaturesChartIndicator extends LineChart<Number, Number> implem
         this.getData().clear();
         this.getData().clear();
         // plotting first data at 0 point of time
-        plot(0, dataModule.getRoomATemperatures()[0], dataModule.getRoomBTemperatures()[0]);
+        plot(0, dataModule.getRoomATemperatures().get(0), dataModule.getRoomBTemperatures().get(0));
         init();
+    }
+
+    public void setTimeUpperBound(double bound) {
+        ((NumberAxis) this.getXAxis()).setUpperBound(bound);
     }
 
     public Timeline getAnimation() {

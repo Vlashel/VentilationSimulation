@@ -12,7 +12,7 @@ import javafx.scene.text.Font;
  */
 public class DesiredTemperatureIndicator extends Label {
     public DesiredTemperatureIndicator() {
-        this.setFont(Font.font(20));
+        this.setFont(Font.font(30));
         this.setMinSize(50, 50);
     }
 }

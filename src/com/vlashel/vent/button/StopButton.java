@@ -11,7 +11,7 @@ public class StopButton extends Button {
                     animationMediator.finishAnimation();
                 }
         );
-        this.setText("Stop");
+        this.setText("Остановить");
     }
 
     public void enable() {
