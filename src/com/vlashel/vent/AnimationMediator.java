@@ -95,7 +95,7 @@ public class AnimationMediator {
 
     public void registerElapsedTimeIndicator(ElapsedTimeIndicator elapsedTimeIndicator) {
         this.elapsedTimeIndicator = elapsedTimeIndicator;
-        registerRefreshables(elapsedTimeCounter);
+      //  registerRefreshables(elapsedTimeCounter);
     }
 
     public void registerRefreshables(Refreshable... refreshables) {

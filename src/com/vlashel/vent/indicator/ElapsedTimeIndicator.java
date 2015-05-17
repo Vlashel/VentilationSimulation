@@ -12,10 +12,9 @@ public class ElapsedTimeIndicator extends Label {
     }
 
     public void setElapsedTime(int time) {
-
         int hours = (time / 60) / 60;
         int minutes = (time - (hours * 60) * 60) / 60;
-        int seconds = time - minutes * 60;
+        int seconds = time - (minutes * 60) - (hours * 60 * 60);
 
         this.setText(String.format("%02d:%02d:%02d" , hours, minutes, seconds));
     }

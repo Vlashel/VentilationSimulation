@@ -16,7 +16,7 @@ public class DataModule implements Refreshable {
         roomBTemperatures = new ArrayList<>();
         roomATemperatures.add(24.0); // initial temperature in Celsius
         roomBTemperatures.add(16.0); // initial temperature in Celsius
-        volumetricFlowRate = 0.2; // volumetric flow rate in cubic meters per second
+        volumetricFlowRate = 0.15; // volumetric flow rate in cubic meters per second
         roomAVolume = 250.0; // cubic meters
         roomBVolume = 50.0; // cubic meters
 
