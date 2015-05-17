@@ -1,11 +1,11 @@
 package com.vlashel.vent.indicator;
 
 import com.vlashel.vent.DataModule;
+import com.vlashel.vent.Helper;
 import com.vlashel.vent.Refreshable;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 
-import java.util.Locale;
 
 public class RoomBTemperatureIndicator extends Label implements Refreshable {
     private DataModule dataModule;
@@ -19,7 +19,7 @@ public class RoomBTemperatureIndicator extends Label implements Refreshable {
     }
 
     private void init() {
-        this.setText(String.valueOf(cutPrecision(dataModule.getRoomBInitialTemperature())));
+        this.setText(String.valueOf(Helper.pack(dataModule.getRoomBInitialTemperature())));
     }
 
     @Override
@@ -27,7 +27,4 @@ public class RoomBTemperatureIndicator extends Label implements Refreshable {
         init();
     }
 
-    private double cutPrecision(double value) {
-        return Double.valueOf(String.format(Locale.ENGLISH, "%.1f", value));
-    }
 }
