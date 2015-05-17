@@ -14,6 +14,6 @@ public class RoomBTemperatureInput extends TextField {
     }
 
     private void init() {
-        this.setText(String.valueOf(Helper.pack(dataModule.getRoomBInitialTemperature())));
+        this.setText(String.valueOf(dataModule.getRoomBInitialTemperature()));
     }
 }

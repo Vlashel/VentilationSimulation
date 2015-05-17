@@ -90,6 +90,7 @@ public class MainWindow extends Application {
         ));
         primaryStage.setScene(new Scene(mainHBox, 910, 460));
         stopButton.disable();
+        animationMediator.makeTimeLeftPrediction();
     }
 
 

@@ -14,6 +14,6 @@ public class SimulationSpeedInput extends TextField {
     }
 
     private void init() {
-        this.setText(String.valueOf(Helper.pack(dataModule.getSpeed())));
+        this.setText(String.valueOf(dataModule.getSpeed()));
     }
 }

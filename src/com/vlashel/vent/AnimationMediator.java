@@ -154,7 +154,8 @@ public class AnimationMediator {
         List<Double> colderRoom = dataModule.getInitialColderRoomTemperatures();
         int size = colderRoom.size();
         int counter = 1;
-        while (counter < size && pack(colderRoom.get(counter)) <= pack(desiredTemperature.get())) {
+        double temperature = pack(desiredTemperature.get());
+        while (counter < size && colderRoom.get(counter) <= temperature) {
             incrementElapsedTimeCounter();
             counter++;
         }
@@ -183,8 +184,9 @@ public class AnimationMediator {
                     })
             );
         }
-        temperaturesChartIndicator.getAnimation().setOnFinished((ActionEvent event) -> finishAnimation());
         temperaturesChartIndicator.setTimeUpperBound(elapsedTimeCounter.getTimeLeft());
+
+        temperaturesChartIndicator.getAnimation().setOnFinished((ActionEvent event) -> finishAnimation());
     }
 
     private void setInitialTemperatures(double roomATemperature, double roomBTemperature) {

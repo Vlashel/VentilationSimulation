@@ -14,6 +14,6 @@ public class RoomAVolumeInput extends TextField {
     }
 
     private void init() {
-        this.setText(String.valueOf(Helper.pack(dataModule.getRoomAVolume())));
+        this.setText(String.valueOf(dataModule.getRoomAVolume()));
     }
 }
