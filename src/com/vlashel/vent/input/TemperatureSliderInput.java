@@ -40,10 +40,10 @@ public class TemperatureSliderInput extends Slider implements Refreshable {
     }
 
     public void disable() {
-        this.setDisabled(true);
+        this.setDisable(true);
     }
 
     public void enable() {
-        this.setDisabled(false);
+        this.setDisable(false);
     }
 }
