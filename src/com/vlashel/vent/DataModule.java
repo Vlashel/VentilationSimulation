@@ -3,8 +3,6 @@ package com.vlashel.vent;
 import java.util.*;
 
 public class DataModule implements Refreshable {
-    private int totalTime;
-    private int steps;
     private double speed;
     private List<Double> roomATemperatures;
     private List<Double> roomBTemperatures;
@@ -13,8 +11,6 @@ public class DataModule implements Refreshable {
     private double roomBVolume;
 
     public DataModule() {
-        totalTime = 500; // seconds
-        steps = 500;
         speed = 0.1;
         roomATemperatures = new ArrayList<>();
         roomBTemperatures = new ArrayList<>();
@@ -25,14 +21,6 @@ public class DataModule implements Refreshable {
         roomBVolume = 50.0; // cubic meters
 
         compute();
-    }
-
-    public int getTotalTime() {
-        return totalTime;
-    }
-
-    public int getSteps() {
-        return steps;
     }
 
     public List<Double> getRoomATemperatures() {
@@ -82,8 +70,7 @@ public class DataModule implements Refreshable {
             roomAend = roomATemperatures.size() - 1;
             roomBend = roomATemperatures.size() - 1;
         }
-        totalTime = roomATemperatures.size();
-        print();
+       // print();
     }
 
 
