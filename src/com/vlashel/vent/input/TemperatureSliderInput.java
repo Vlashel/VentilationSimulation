@@ -21,7 +21,9 @@ public class TemperatureSliderInput extends Slider implements Refreshable {
         this.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-              //  animationMediator.makeTimeLeftPrediction();
+                if (controllerMediator.getIsRecuperationOn()) {
+                    controllerMediator.makeTimeLeftPrediction();
+                }
             }
         });
     }

@@ -25,10 +25,13 @@ public class MainWindow extends Application {
         controllerMediator = new ControllerMediator();
         DataModule dataModule = new DataModule(controllerMediator);
         TemperaturesChartIndicator chart = new TemperaturesChartIndicator(dataModule);
-        Ventilator roomAVentilatorIn = new Ventilator();
-        Ventilator roomAVentilatorOut = new Ventilator(-360);
-        Ventilator roomBVentilatorIn = new Ventilator();
-        Ventilator roomBVentilatorOut = new Ventilator(-360);
+
+        Ventilator serverRoomVentilatorIn = new Ventilator();
+        Ventilator serverRoomVentilatorOut = new Ventilator(-360);
+
+        Ventilator officeRoomVentilatorIn = new Ventilator();
+        Ventilator officeRoomVentilatorOut = new Ventilator(-360);
+
         StartButton startButton = new StartButton(controllerMediator);
         StopButton stopButton = new StopButton(controllerMediator);
         SettingsButton settingsButton = new SettingsButton(controllerMediator);
@@ -46,12 +49,12 @@ public class MainWindow extends Application {
 
         controllerMediator.registerTemperaturesChart(chart);
         controllerMediator.registerServerRoomVentilators(
-                roomAVentilatorIn,
-                roomAVentilatorOut
+                serverRoomVentilatorIn,
+                serverRoomVentilatorOut
         );
         controllerMediator.registerOfficeRoomVentilators(
-                roomBVentilatorIn,
-                roomBVentilatorOut
+                officeRoomVentilatorIn,
+                officeRoomVentilatorOut
         );
         controllerMediator.registerElapsedTimeIndicator(elapsedTimeIndicator);
         TemperatureSliderInput temperatureSliderInput = new TemperatureSliderInput(dataModule, controllerMediator);
@@ -74,7 +77,6 @@ public class MainWindow extends Application {
                                 new VBox(
                                         new HBox(new Label("Температура в серверной комнате: "), serverRoomTemperatureIndicator)
                                 )
-
                         ),
                         new HBox(
                                 new VBox(
@@ -87,18 +89,17 @@ public class MainWindow extends Application {
                                 new VBox(startButton, stopButton),
                                 new VBox(
                                         new HBox(new Label("Объемный расход в м3/сек: "), volumetricFlowRateIndicator),
-                                        new HBox(new Label("Объем комнаты А, в м3: "), serverRoomVolumeIndicator),
-                                        new HBox(new Label("Объем комнаты Б, в м3: "), officeRoomVolumeIndicator),
+                                        new HBox(new Label("Объем серверной комнаты, в м3: "), serverRoomVolumeIndicator),
+                                        new HBox(new Label("Объем офисного помещения, в м3: "), officeRoomVolumeIndicator),
                                         settingsButton
                                 )
                         ),
-                        new VBox(new Label("Вентиляторы серверной комнаты:"), new HBox(roomAVentilatorIn, roomAVentilatorOut)),
-                        new VBox(new Label("Вентиляторы офисного помещения:"), new HBox(roomBVentilatorIn, roomBVentilatorOut))
+                        new VBox(new Label("Вентиляторы серверной комнаты:"), new HBox(serverRoomVentilatorIn, serverRoomVentilatorOut)),
+                        new VBox(new Label("Вентиляторы офисного помещения:"), new HBox(officeRoomVentilatorIn, officeRoomVentilatorOut))
                 )
         );
         primaryStage.setScene(new Scene(mainHBox));
         stopButton.disable();
-        //animationMediator.makeTimeLeftPrediction();
     }
 
 

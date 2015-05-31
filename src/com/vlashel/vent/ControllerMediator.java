@@ -38,7 +38,6 @@ public class ControllerMediator {
     private ElapsedTimeCounter elapsedTimeCounter = new ElapsedTimeCounter();
     private List<Refreshable> refreshables = new ArrayList<>();
     private List<Animatable> animatables = new ArrayList<>();
-    private int timeLeft = 0;
 
     private DoubleProperty desiredTemperature = new SimpleDoubleProperty();
     private BooleanProperty isRecuperationOn = new SimpleBooleanProperty();
@@ -53,7 +52,7 @@ public class ControllerMediator {
     private double outsideAirTemp = 14.0;
     private double serverRoomTempIncrease = 0.02598786;
     private double officeRoomTempDecrease = 0.001;
-    private long millis = 100;
+    private long millis = 50;
     private int timePoint = 0;
 
     public ControllerMediator() {
@@ -131,6 +130,7 @@ public class ControllerMediator {
 
     public void registerElapsedTimeIndicator(ElapsedTimeIndicator elapsedTimeIndicator) {
         this.elapsedTimeIndicator = elapsedTimeIndicator;
+        registerRefreshables(elapsedTimeIndicator);
 
     }
 
@@ -166,9 +166,8 @@ public class ControllerMediator {
     }
 
     public void makeTimeLeftPrediction() {
-        refreshElapsedTimeCounter();
         elapsedTimeCounter.setTimeLeft(dataModule.simulateAndGetTimeLeft());
-        Platform.runLater(() -> setElapsedTimeIndicatorValue());
+        setElapsedTimeIndicatorValue();
     }
 
     private void setInitialTemperatures(double serverRoomTemperature, double officeRoomTemperature) {
@@ -188,26 +187,7 @@ public class ControllerMediator {
         elapsedTimeCounter.decrement();
     }
 
-    private void callback(int timePoint,
-                          double serverRoomTemperature,
-                          double officeRoomTemperature) {
 
-        temperaturesChartIndicator.plot(
-                timePoint,
-                serverRoomTemperature,
-                officeRoomTemperature
-        );
-
-        setInitialTemperatures(serverRoomTemperature, officeRoomTemperature);
-
-        setRoomATemperatureIndicatorValue(serverRoomTemperature);
-        setRoomBTemperatureIndicatorValue(officeRoomTemperature);
-
-        if (isRecuperationOn.get()) {
-            decrementElapsedTimeCounter();
-            setElapsedTimeIndicatorValue();
-        }
-    }
 
     public void enableSettingsButton() {
         settingsButton.enable();
@@ -293,13 +273,11 @@ public class ControllerMediator {
                 possiblyAdjustChart();
 
                 while (alwaysTrue()) {
-                    if (getIsRecuperationOn()) {
-                        makeTimeLeftPrediction();
-                    }
-                    if (checkWhetherShouldRecuperateNow() && pack(serverRoomTemperature) >= serverRoomTempMax) {
+                    if (checkWhetherShouldRecuperateNow() && pack(serverRoomTemperature) >= serverRoomTempMax && pack(officeRoomTemperature) < pack(desiredTemperature.get())) {
+                        Platform.runLater(() -> makeTimeLeftPrediction());
                         officeRoomVentilators.forEach(Ventilator::play);
 
-                        while (pack(officeRoomTemperature) <= pack(desiredTemperature.get()) && pack(serverRoomTemperature) <= serverRoomTempMax) {
+                        while (pack(officeRoomTemperature) <= pack(desiredTemperature.get()) && pack(serverRoomTemperature) <= serverRoomTempMax && getIsRecuperationOn()) {
                             possiblyAdjustChart();
 
                             double dTofficedt = ((volumetricFlowRate / officeRoomVolume) * (serverRoomTemperature - officeRoomTemperature)) - officeRoomTempDecrease;
@@ -318,7 +296,7 @@ public class ControllerMediator {
                         if (pack(serverRoomTemperature) >= serverRoomTempMax) {
                             serverRoomVentilators.forEach(Ventilator::play);
 
-                            while (serverRoomTemperature >= serverRoomTempMin && !checkWhetherShouldRecuperateNow()) {
+                            while (pack(serverRoomTemperature) >= serverRoomTempMin && !checkWhetherShouldRecuperateNow()) {
                                 possiblyAdjustChart();
 
                                 double dTserverdt = ((volumetricFlowRate / serverRoomVolume) * (outsideAirTemp - serverRoomTemperature)) + serverRoomTempIncrease;
@@ -363,8 +341,38 @@ public class ControllerMediator {
         service.start();
     }
 
+    private void callback(int timePoint,
+                          double serverRoomTemperature,
+                          double officeRoomTemperature) {
+
+        temperaturesChartIndicator.plot(
+                timePoint,
+                serverRoomTemperature,
+                officeRoomTemperature
+        );
+
+        setInitialTemperatures(serverRoomTemperature, officeRoomTemperature);
+
+        setRoomATemperatureIndicatorValue(serverRoomTemperature);
+        setRoomBTemperatureIndicatorValue(officeRoomTemperature);
+
+        if (isRecuperationOn.get()) {
+            if (elapsedTimeCounter.getTimeLeft() != 0) {
+                decrementElapsedTimeCounter();
+                setElapsedTimeIndicatorValue();
+            } else {
+                setElapsedTimeIndicatorValue();
+            }
+        } else {
+            setElapsedTimeIndicatorValue();
+        }
+        if (pack(desiredTemperature.get() ) > officeRoomTemperature)  {
+            refreshTemperatureSlider();
+        }
+    }
+
     private boolean checkWhetherShouldRecuperateNow() {
-        return getIsRecuperationOn() && pack(desiredTemperature.get()) - pack(officeRoomTemperature) >= 1.0;
+        return getIsRecuperationOn() && pack(desiredTemperature.get()) - pack(officeRoomTemperature) >= 0.1;
     }
 
     private void possiblyAdjustChart() {
@@ -384,13 +392,5 @@ public class ControllerMediator {
 
     public void setDesiredTemperature(double desiredTemperature) {
         this.desiredTemperature.set(desiredTemperature);
-    }
-
-    public int getTimeLeft() {
-        return timeLeft;
-    }
-
-    public void setTimeLeft(int timeLeft) {
-        this.timeLeft = timeLeft;
     }
 }

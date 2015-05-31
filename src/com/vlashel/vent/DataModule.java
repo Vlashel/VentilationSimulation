@@ -30,7 +30,7 @@ public class DataModule implements Refreshable {
         this.controllerMediator = controllerMediator;
         speed = 0.01;
         serverRoomTemperature = 27.0; // initial temperature in Celsius
-        officeRoomTemperature = 14.0; // initial temperature in Celsius
+        officeRoomTemperature = 18.0; // initial temperature in Celsius
         volumetricFlowRate = 0.15; // volumetric flow rate in cubic meters per second
         serverRoomVolume = 30.0; // cubic meters 3 x 4 x 2.5
         officeRoomVolume = 140.0; // cubic meters 8 x 7 x 2.5
@@ -53,7 +53,18 @@ public class DataModule implements Refreshable {
     }
 
     public double getMaximumAchievableTemperature() {
-        return 22.0;
+        double officeRoomTemperature = this.officeRoomTemperature;
+        double serverRoomTemperature = this.serverRoomTemperature;
+
+        int dt = 1;
+        while (pack(serverRoomTemperature) <= serverRoomTempMax) {
+            double dTofficedt = ((volumetricFlowRate / officeRoomVolume) * (serverRoomTemperature - officeRoomTemperature)) - officeRoomTempDecrease;
+            double dTserverdt = ((volumetricFlowRate / serverRoomVolume) * (officeRoomTemperature - serverRoomTemperature)) + serverRoomTempIncrease;
+
+            officeRoomTemperature += dTofficedt * dt;
+            serverRoomTemperature += dTserverdt * dt;
+        }
+        return officeRoomTemperature - 0.2;
     }
 
     public void setVolumetricFlowRate(double volumetricFlowRate) {
@@ -80,10 +91,14 @@ public class DataModule implements Refreshable {
         int dt = 1;
         int timePoint = 0;
 
-        if (controllerMediator.getIsRecuperationOn()) {
-            while (pack(officeRoomTemperature) <= pack(desiredTemperature.get())) {
+        double officeRoomTemperature = this.officeRoomTemperature;
+        double serverRoomTemperature = this.serverRoomTemperature;
+
+        if (recuperateToOfficeRoom.get()) {
+            while (pack(officeRoomTemperature) < pack(desiredTemperature.get()) && checkWhetherShouldRecuperateNow()) {
                 if (checkWhetherShouldRecuperateNow() && pack(serverRoomTemperature) >= serverRoomTempMax) {
                     while (pack(officeRoomTemperature) <= pack(desiredTemperature.get()) && pack(serverRoomTemperature) <= serverRoomTempMax) {
+
                         double dTofficedt = ((volumetricFlowRate / officeRoomVolume) * (serverRoomTemperature - officeRoomTemperature)) - officeRoomTempDecrease;
                         double dTserverdt = ((volumetricFlowRate / serverRoomVolume) * (officeRoomTemperature - serverRoomTemperature)) + serverRoomTempIncrease;
 
@@ -93,7 +108,8 @@ public class DataModule implements Refreshable {
                     }
                 } else {
                     if (pack(serverRoomTemperature) >= serverRoomTempMax) {
-                        while (serverRoomTemperature >= serverRoomTempMin && !checkWhetherShouldRecuperateNow()) {
+                        while (pack(serverRoomTemperature) >= serverRoomTempMin && !checkWhetherShouldRecuperateNow()) {
+
                             double dTserverdt = ((volumetricFlowRate / serverRoomVolume) * (outsideAirTemp - serverRoomTemperature)) + serverRoomTempIncrease;
 
                             serverRoomTemperature += dTserverdt * dt;
@@ -117,7 +133,7 @@ public class DataModule implements Refreshable {
     }
 
     private boolean checkWhetherShouldRecuperateNow() {
-        return recuperateToOfficeRoom.get() && pack(desiredTemperature.get()) - pack(officeRoomTemperature) >= 1.0;
+        return recuperateToOfficeRoom.get() && pack(desiredTemperature.get()) - pack(officeRoomTemperature) >= 0.1;
     }
 
 
@@ -152,5 +168,25 @@ public class DataModule implements Refreshable {
     @Override
     public void refresh() {
         simulateAndGetTimeLeft();
+    }
+
+    @Override
+    public String toString() {
+        return "DataModule{" +
+                "speed=" + speed +
+                ", serverRoomTemperature=" + serverRoomTemperature +
+                ", officeRoomTemperature=" + officeRoomTemperature +
+                ", volumetricFlowRate=" + volumetricFlowRate +
+                ", serverRoomVolume=" + serverRoomVolume +
+                ", officeRoomVolume=" + officeRoomVolume +
+                ", serverRoomTempMax=" + serverRoomTempMax +
+                ", serverRoomTempMin=" + serverRoomTempMin +
+                ", outsideAirTemp=" + outsideAirTemp +
+                ", serverRoomTempIncrease=" + serverRoomTempIncrease +
+                ", officeRoomTempDecrease=" + officeRoomTempDecrease +
+                ", recuperateToOfficeRoom=" + recuperateToOfficeRoom +
+                ", desiredTemperature=" + desiredTemperature +
+                ", controllerMediator=" + controllerMediator +
+                '}';
     }
 }
