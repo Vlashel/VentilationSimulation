@@ -1,6 +1,6 @@
 package com.vlashel.vent.window;
 
-import com.vlashel.vent.AnimationMediator;
+import com.vlashel.vent.ControllerMediator;
 import com.vlashel.vent.DataModule;
 import com.vlashel.vent.indicator.*;
 import com.vlashel.vent.Ventilator;
@@ -19,61 +19,67 @@ import javafx.stage.Stage;
 
 public class MainWindow extends Application {
 
-    private void init(Stage primaryStage) {
-        DataModule dataModule = new DataModule();
+    private ControllerMediator controllerMediator;
 
-        AnimationMediator animationMediator = new AnimationMediator();
+    private void init(Stage primaryStage) {
+        controllerMediator = new ControllerMediator();
+        DataModule dataModule = new DataModule(controllerMediator);
         TemperaturesChartIndicator chart = new TemperaturesChartIndicator(dataModule);
         Ventilator roomAVentilatorIn = new Ventilator();
         Ventilator roomAVentilatorOut = new Ventilator(-360);
-        StartButton startButton = new StartButton(animationMediator);
-        StopButton stopButton = new StopButton(animationMediator);
-        SettingsButton settingsButton = new SettingsButton(animationMediator);
-        RoomATemperatureIndicator roomATemperatureIndicator = new RoomATemperatureIndicator(dataModule);
-        RoomBTemperatureIndicator roomBTemperatureIndicator = new RoomBTemperatureIndicator(dataModule);
+        Ventilator roomBVentilatorIn = new Ventilator();
+        Ventilator roomBVentilatorOut = new Ventilator(-360);
+        StartButton startButton = new StartButton(controllerMediator);
+        StopButton stopButton = new StopButton(controllerMediator);
+        SettingsButton settingsButton = new SettingsButton(controllerMediator);
+        ServerRoomTemperatureIndicator serverRoomTemperatureIndicator = new ServerRoomTemperatureIndicator(dataModule);
+        OfficeRoomTemperatureIndicator officeRoomTemperatureIndicator = new OfficeRoomTemperatureIndicator(dataModule);
         DesiredTemperatureIndicator desiredTemperatureIndicator = new DesiredTemperatureIndicator();
         ElapsedTimeIndicator elapsedTimeIndicator = new ElapsedTimeIndicator();
 
-        SettingsWindow settingsWindow = new SettingsWindow(animationMediator, dataModule);
-        RoomAVolumeIndicator roomAVolumeIndicator = new RoomAVolumeIndicator(dataModule);
-        RoomBVolumeIndicator roomBVolumeIndicator = new RoomBVolumeIndicator(dataModule);
+        SettingsWindow settingsWindow = new SettingsWindow(controllerMediator, dataModule);
+        ServerRoomVolumeIndicator serverRoomVolumeIndicator = new ServerRoomVolumeIndicator(dataModule);
+        OfficeRoomVolumeIndicator officeRoomVolumeIndicator = new OfficeRoomVolumeIndicator(dataModule);
         VolumetricFlowRateIndicator volumetricFlowRateIndicator = new VolumetricFlowRateIndicator(dataModule);
 
-        animationMediator.registerDataModule(dataModule);
+        controllerMediator.registerDataModule(dataModule);
 
-        animationMediator.registerTemperaturesChart(chart);
-        animationMediator.registerVentilators(
+        controllerMediator.registerTemperaturesChart(chart);
+        controllerMediator.registerServerRoomVentilators(
                 roomAVentilatorIn,
                 roomAVentilatorOut
         );
-        animationMediator.registerElapsedTimeIndicator(elapsedTimeIndicator);
-        TemperatureSliderInput temperatureSliderInput = new TemperatureSliderInput(dataModule, animationMediator);
-        animationMediator.registerStartButton(startButton);
-        animationMediator.registerStopButton(stopButton);
-        animationMediator.registerSettingsButton(settingsButton);
-        animationMediator.registerRoomATemperatureIndicator(roomATemperatureIndicator);
-        animationMediator.registerRoomBTemperatureIndicator(roomBTemperatureIndicator);
-        animationMediator.registerTemperatureSlider(temperatureSliderInput);
-        animationMediator.registerDesiredTemperatureIndicator(desiredTemperatureIndicator);
-        animationMediator.registerRoomAVolumeIndicator(roomAVolumeIndicator);
-        animationMediator.registerRoomBVolumeIndicator(roomBVolumeIndicator);
-        animationMediator.registerVolumetricFlowRateIndicator(volumetricFlowRateIndicator);
-        animationMediator.registerInitialConditionsWindow(settingsWindow);
+        controllerMediator.registerOfficeRoomVentilators(
+                roomBVentilatorIn,
+                roomBVentilatorOut
+        );
+        controllerMediator.registerElapsedTimeIndicator(elapsedTimeIndicator);
+        TemperatureSliderInput temperatureSliderInput = new TemperatureSliderInput(dataModule, controllerMediator);
+        controllerMediator.registerStartButton(startButton);
+        controllerMediator.registerStopButton(stopButton);
+        controllerMediator.registerSettingsButton(settingsButton);
+        controllerMediator.registerRoomATemperatureIndicator(serverRoomTemperatureIndicator);
+        controllerMediator.registerRoomBTemperatureIndicator(officeRoomTemperatureIndicator);
+        controllerMediator.registerTemperatureSlider(temperatureSliderInput);
+        controllerMediator.registerDesiredTemperatureIndicator(desiredTemperatureIndicator);
+        controllerMediator.registerRoomAVolumeIndicator(serverRoomVolumeIndicator);
+        controllerMediator.registerRoomBVolumeIndicator(officeRoomVolumeIndicator);
+        controllerMediator.registerVolumetricFlowRateIndicator(volumetricFlowRateIndicator);
+        controllerMediator.registerInitialConditionsWindow(settingsWindow);
 
 
-        HBox mainHBox = new HBox(chart, new HBox(
+        HBox mainHBox = new HBox(chart,
                 new VBox(
                         new HBox(
                                 new VBox(
-                                        new HBox(new Label("Температура в комнате А: "), roomATemperatureIndicator)
-                                ),
-                                roomAVentilatorIn
+                                        new HBox(new Label("Температура в серверной комнате: "), serverRoomTemperatureIndicator)
+                                )
+
                         ),
                         new HBox(
                                 new VBox(
-                                        new HBox(new Label("Температура в комнате Б: "), roomBTemperatureIndicator)
-                                ),
-                                roomAVentilatorOut
+                                        new HBox(new Label("Температура в офисном помещении: "), officeRoomTemperatureIndicator)
+                                )
                         ),
                         temperatureSliderInput,
                         new HBox(new HBox(new Label("Желаемая температура: "), desiredTemperatureIndicator), new HBox(new Label("Оставшееся время: "), elapsedTimeIndicator)),
@@ -81,16 +87,18 @@ public class MainWindow extends Application {
                                 new VBox(startButton, stopButton),
                                 new VBox(
                                         new HBox(new Label("Объемный расход в м3/сек: "), volumetricFlowRateIndicator),
-                                        new HBox(new Label("Объем комнаты А, в м3: "), roomAVolumeIndicator),
-                                        new HBox(new Label("Объем комнаты Б, в м3: "), roomBVolumeIndicator),
+                                        new HBox(new Label("Объем комнаты А, в м3: "), serverRoomVolumeIndicator),
+                                        new HBox(new Label("Объем комнаты Б, в м3: "), officeRoomVolumeIndicator),
                                         settingsButton
                                 )
-                        )
+                        ),
+                        new VBox(new Label("Вентиляторы серверной комнаты:"), new HBox(roomAVentilatorIn, roomAVentilatorOut)),
+                        new VBox(new Label("Вентиляторы офисного помещения:"), new HBox(roomBVentilatorIn, roomBVentilatorOut))
                 )
-        ));
-        primaryStage.setScene(new Scene(mainHBox, 910, 460));
+        );
+        primaryStage.setScene(new Scene(mainHBox));
         stopButton.disable();
-        animationMediator.makeTimeLeftPrediction();
+        //animationMediator.makeTimeLeftPrediction();
     }
 
 
@@ -102,9 +110,11 @@ public class MainWindow extends Application {
     public void start(Stage primaryStage) throws Exception {
         init(primaryStage);
         primaryStage.setResizable(false);
+        primaryStage.setMinWidth(1220);
         primaryStage.setTitle("Thermocycle");
         primaryStage.getIcons().add(new Image(getClass().getResource("icon-png.png").toExternalForm()));
         primaryStage.show();
+        controllerMediator.animate();
     }
 
     public static void main(String[] args) {

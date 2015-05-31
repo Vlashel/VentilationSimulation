@@ -4,16 +4,16 @@ import com.vlashel.vent.DataModule;
 import com.vlashel.vent.Helper;
 import javafx.scene.control.TextField;
 
-public class RoomBTemperatureInput extends TextField {
+public class ServerRoomTemperatureInput extends TextField {
     private DataModule dataModule;
 
-    public RoomBTemperatureInput(DataModule dataModule) {
+    public ServerRoomTemperatureInput(DataModule dataModule) {
         this.dataModule = dataModule;
 
         init();
     }
 
     private void init() {
-        this.setText(String.valueOf(Helper.pack(dataModule.getRoomBInitialTemperature())));
+        this.setText(String.valueOf(Helper.pack(dataModule.getServerRoomTemperature())));
     }
 }

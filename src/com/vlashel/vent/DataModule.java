@@ -1,115 +1,144 @@
 package com.vlashel.vent;
 
-import java.util.*;
+
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+
+import static com.vlashel.vent.Helper.pack;
 
 public class DataModule implements Refreshable {
     private double speed;
-    private List<Double> roomATemperatures;
-    private List<Double> roomBTemperatures;
+    private Double serverRoomTemperature;
+    private Double officeRoomTemperature;
     private double volumetricFlowRate;
-    private double roomAVolume;
-    private double roomBVolume;
+    private double serverRoomVolume;
+    private double officeRoomVolume;
+    private double serverRoomTempMax;
+    private double serverRoomTempMin;
+    private double outsideAirTemp;
+    private double serverRoomTempIncrease;
+    private double officeRoomTempDecrease;
 
-    public DataModule() {
-        speed = 0.1;
-        roomATemperatures = new ArrayList<>();
-        roomBTemperatures = new ArrayList<>();
-        roomATemperatures.add(24.0); // initial temperature in Celsius
-        roomBTemperatures.add(16.0); // initial temperature in Celsius
+    private BooleanProperty recuperateToOfficeRoom = new SimpleBooleanProperty();
+    private DoubleProperty desiredTemperature = new SimpleDoubleProperty();
+    private ControllerMediator controllerMediator;
+
+
+    public DataModule(ControllerMediator controllerMediator) {
+        this.controllerMediator = controllerMediator;
+        speed = 0.01;
+        serverRoomTemperature = 27.0; // initial temperature in Celsius
+        officeRoomTemperature = 14.0; // initial temperature in Celsius
         volumetricFlowRate = 0.15; // volumetric flow rate in cubic meters per second
-        roomAVolume = 250.0; // cubic meters
-        roomBVolume = 50.0; // cubic meters
+        serverRoomVolume = 30.0; // cubic meters 3 x 4 x 2.5
+        officeRoomVolume = 140.0; // cubic meters 8 x 7 x 2.5
+        serverRoomTempMax = 27.0;
+        serverRoomTempMin = 22.0;
+        outsideAirTemp = 14.0;
+        serverRoomTempIncrease = 0.02598786;
+        officeRoomTempDecrease = 0.001;
 
-        compute();
+        recuperateToOfficeRoom.bind(controllerMediator.isRecuperationOnProperty());
+        desiredTemperature.bind(controllerMediator.desiredTemperatureProperty());
     }
 
-    public List<Double> getRoomATemperatures() {
-        return roomATemperatures;
+    public Double getServerRoomTemperature() {
+        return serverRoomTemperature;
     }
 
-    public List<Double> getRoomBTemperatures() {
-        return roomBTemperatures;
+    public Double getOfficeRoomTemperature() {
+        return officeRoomTemperature;
     }
 
     public double getMaximumAchievableTemperature() {
-        return getInitialColderRoomTemperatures().get(getInitialColderRoomTemperatures().size() - 1);
+        return 22.0;
     }
 
     public void setVolumetricFlowRate(double volumetricFlowRate) {
         this.volumetricFlowRate = volumetricFlowRate;
     }
 
-    public void setRoomAVolume(double roomAVolume) {
-        this.roomAVolume = roomAVolume;
+    public void setServerRoomVolume(double serverRoomVolume) {
+        this.serverRoomVolume = serverRoomVolume;
     }
 
-    public void setRoomBVolume(double roomBVolume) {
-        this.roomBVolume = roomBVolume;
+    public void setOfficeRoomVolume(double officeRoomVolume) {
+        this.officeRoomVolume = officeRoomVolume;
     }
 
     public double getHighestTemperature() {
-        return Math.max(roomATemperatures.get(0), roomBTemperatures.get(0));
+        return Math.max(serverRoomTemperature, officeRoomTemperature);
     }
 
     public double getLowestTemperature() {
-        return roomATemperatures.size() > 1 ? Math.min(roomATemperatures.get(1), roomBTemperatures.get(1)) : roomATemperatures.get(0);
+        return officeRoomTemperature;
     }
 
-    private void compute() {
-        int roomAend = roomATemperatures.size() - 1;
-        int roomBend = roomBTemperatures.size() - 1;
+    public int simulateAndGetTimeLeft() {
+        int dt = 1;
+        int timePoint = 0;
 
-        double dt = 1;
-        while (!Helper.pack(roomATemperatures.get(roomAend)).equals(Helper.pack(roomBTemperatures.get(roomBend)))) {
-            double dTbdt = (volumetricFlowRate / roomBVolume) * (roomATemperatures.get(roomAend) - roomBTemperatures.get(roomBend));
-            double dTadt = (volumetricFlowRate / roomAVolume) * (roomBTemperatures.get(roomAend) - roomATemperatures.get(roomBend));
+        if (controllerMediator.getIsRecuperationOn()) {
+            while (pack(officeRoomTemperature) <= pack(desiredTemperature.get())) {
+                if (checkWhetherShouldRecuperateNow() && pack(serverRoomTemperature) >= serverRoomTempMax) {
+                    while (pack(officeRoomTemperature) <= pack(desiredTemperature.get()) && pack(serverRoomTemperature) <= serverRoomTempMax) {
+                        double dTofficedt = ((volumetricFlowRate / officeRoomVolume) * (serverRoomTemperature - officeRoomTemperature)) - officeRoomTempDecrease;
+                        double dTserverdt = ((volumetricFlowRate / serverRoomVolume) * (officeRoomTemperature - serverRoomTemperature)) + serverRoomTempIncrease;
 
-            roomBTemperatures.add(roomBTemperatures.get(roomBend) + dTbdt * dt);
-            roomATemperatures.add(roomATemperatures.get(roomAend) + dTadt * dt);
+                        officeRoomTemperature += dTofficedt * dt;
+                        serverRoomTemperature += dTserverdt * dt;
+                        timePoint += dt;
+                    }
+                } else {
+                    if (pack(serverRoomTemperature) >= serverRoomTempMax) {
+                        while (serverRoomTemperature >= serverRoomTempMin && !checkWhetherShouldRecuperateNow()) {
+                            double dTserverdt = ((volumetricFlowRate / serverRoomVolume) * (outsideAirTemp - serverRoomTemperature)) + serverRoomTempIncrease;
 
-            roomAend = roomATemperatures.size() - 1;
-            roomBend = roomATemperatures.size() - 1;
+                            serverRoomTemperature += dTserverdt * dt;
+
+                            if (pack(officeRoomTemperature) > outsideAirTemp) {
+                                officeRoomTemperature -= officeRoomTempDecrease * dt;
+                            }
+                            timePoint += dt;
+                        }
+                    } else {
+                        serverRoomTemperature += serverRoomTempIncrease * dt;
+                        if (pack(officeRoomTemperature) > outsideAirTemp) {
+                            officeRoomTemperature -= officeRoomTempDecrease * dt;
+                        }
+                        timePoint += dt;
+                    }
+                }
+            }
         }
-       // print();
+        return timePoint;
+    }
+
+    private boolean checkWhetherShouldRecuperateNow() {
+        return recuperateToOfficeRoom.get() && pack(desiredTemperature.get()) - pack(officeRoomTemperature) >= 1.0;
     }
 
 
-    public void setRoomAInitialTemperature(double roomATemperature) {
-        this.roomATemperatures.clear();
-        this.roomATemperatures.add(roomATemperature);
+    public void setServerRoomTemperature(double serverRoomTemperature) {
+        this.serverRoomTemperature = serverRoomTemperature;
     }
 
-    public void setRoomBInitialTemperature(double roomBTemperature) {
-        this.roomBTemperatures.clear();
-        this.roomBTemperatures.add(roomBTemperature);
-    }
-
-    public double getRoomAInitialTemperature() {
-        return this.roomATemperatures.get(0);
-    }
-
-    public double getRoomBInitialTemperature() {
-        return this.roomBTemperatures.get(0);
-    }
-
-    public List<Double> getInitialHotterRoomTemperatures() {
-        return roomATemperatures.get(0) > roomBTemperatures.get(0) ? roomATemperatures : roomBTemperatures;
-    }
-
-    public List<Double> getInitialColderRoomTemperatures() {
-        return roomATemperatures.get(0) < roomBTemperatures.get(0) ? roomATemperatures : roomBTemperatures;
+    public void setOfficeRoomTemperature(double officeRoomTemperature) {
+        this.officeRoomTemperature = officeRoomTemperature;
     }
 
     public double getVolumetricFlowRate() {
         return volumetricFlowRate;
     }
 
-    public double getRoomAVolume() {
-        return roomAVolume;
+    public double getServerRoomVolume() {
+        return serverRoomVolume;
     }
 
-    public double getRoomBVolume() {
-        return roomBVolume;
+    public double getOfficeRoomVolume() {
+        return officeRoomVolume;
     }
 
     public double getSpeed() {
@@ -122,16 +151,6 @@ public class DataModule implements Refreshable {
 
     @Override
     public void refresh() {
-        compute();
-    }
-
-    private void print() {
-        int timePoint = 0;
-        while (timePoint < roomBTemperatures.size() && timePoint < roomATemperatures.size()) {
-            System.out.println("Temperature in room A at time: " + timePoint + " is: " + roomATemperatures.get(timePoint));
-            System.out.println("Temperature in room B at time: " + timePoint + " is: " + roomBTemperatures.get(timePoint));
-            timePoint++;
-            System.out.println();
-        }
+        simulateAndGetTimeLeft();
     }
 }

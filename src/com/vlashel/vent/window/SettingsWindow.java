@@ -1,6 +1,6 @@
 package com.vlashel.vent.window;
 
-import com.vlashel.vent.AnimationMediator;
+import com.vlashel.vent.ControllerMediator;
 import com.vlashel.vent.DataModule;
 import com.vlashel.vent.input.*;
 import javafx.geometry.Pos;
@@ -15,10 +15,10 @@ import javafx.stage.Stage;
 public class SettingsWindow {
 
     private DataModule dataModule;
-    private AnimationMediator animationMediator;
+    private ControllerMediator controllerMediator;
 
-    public SettingsWindow(AnimationMediator animationMediator, DataModule dataModule) {
-        this.animationMediator = animationMediator;
+    public SettingsWindow(ControllerMediator controllerMediator, DataModule dataModule) {
+        this.controllerMediator = controllerMediator;
         this.dataModule = dataModule;
     }
 
@@ -27,11 +27,11 @@ public class SettingsWindow {
         window.initModality(Modality.APPLICATION_MODAL);
         window.setTitle("Настройки");
 
-        RoomATemperatureInput roomATemperatureInput = new RoomATemperatureInput(dataModule);
-        RoomBTemperatureInput roomBTemperatureInput = new RoomBTemperatureInput(dataModule);
+        ServerRoomTemperatureInput serverRoomTemperatureInput = new ServerRoomTemperatureInput(dataModule);
+        OfficeRoomTemperatureInput officeRoomTemperatureInput = new OfficeRoomTemperatureInput(dataModule);
 
-        RoomAVolumeInput roomAVolumeInput = new RoomAVolumeInput(dataModule);
-        RoomBVolumeInput roomBVolumeInput = new RoomBVolumeInput(dataModule);
+        ServerRoomVolumeInput serverRoomVolumeInput = new ServerRoomVolumeInput(dataModule);
+        OfficeRoomVolumeInput officeRoomVolumeInput = new OfficeRoomVolumeInput(dataModule);
 
         VolumetricFlowRateInput volumetricFlowRateInput = new VolumetricFlowRateInput(dataModule);
 
@@ -49,24 +49,24 @@ public class SettingsWindow {
         labels.setSpacing(10);
 
         VBox inputs = new VBox(
-                roomATemperatureInput,
-                roomBTemperatureInput,
-                roomAVolumeInput,
-                roomBVolumeInput,
+                serverRoomTemperatureInput,
+                officeRoomTemperatureInput,
+                serverRoomVolumeInput,
+                officeRoomVolumeInput,
                 volumetricFlowRateInput,
                 simulationSpeedInput
         );
 
         Button saveButton = new Button("Сохранить");
         saveButton.setOnAction(e -> {
-            dataModule.setRoomAInitialTemperature(Double.valueOf(roomATemperatureInput.getText()));
-            dataModule.setRoomBInitialTemperature(Double.valueOf(roomBTemperatureInput.getText()));
-            dataModule.setRoomAVolume(Double.valueOf(roomAVolumeInput.getText()));
-            dataModule.setRoomBVolume(Double.valueOf(roomBVolumeInput.getText()));
+            dataModule.setServerRoomTemperature(Double.valueOf(serverRoomTemperatureInput.getText()));
+            dataModule.setOfficeRoomTemperature(Double.valueOf(officeRoomTemperatureInput.getText()));
+            dataModule.setServerRoomVolume(Double.valueOf(serverRoomVolumeInput.getText()));
+            dataModule.setOfficeRoomVolume(Double.valueOf(officeRoomVolumeInput.getText()));
             dataModule.setVolumetricFlowRate(Double.valueOf(volumetricFlowRateInput.getText()));
             dataModule.setSpeed(Double.valueOf(simulationSpeedInput.getText()));
 
-            animationMediator.refresh();
+            controllerMediator.refresh();
             window.close();
         });
 

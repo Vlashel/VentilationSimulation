@@ -9,7 +9,7 @@ public class TemperatureSliderInput extends Slider implements Refreshable {
 
     private DataModule dataModule;
 
-    public TemperatureSliderInput(DataModule dataModule, AnimationMediator animationMediator) {
+    public TemperatureSliderInput(DataModule dataModule, ControllerMediator controllerMediator) {
         this.dataModule = dataModule;
         this.setShowTickLabels(true);
         this.setShowTickMarks(true);
@@ -21,7 +21,7 @@ public class TemperatureSliderInput extends Slider implements Refreshable {
         this.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                animationMediator.makeTimeLeftPrediction();
+              //  animationMediator.makeTimeLeftPrediction();
             }
         });
     }

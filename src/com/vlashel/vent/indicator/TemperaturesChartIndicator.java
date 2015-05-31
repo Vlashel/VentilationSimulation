@@ -9,8 +9,8 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 
 public class TemperaturesChartIndicator extends LineChart<Number, Number> implements Animatable, Refreshable {
-    private XYChart.Series<Number, Number> roomASeries;
-    private XYChart.Series<Number, Number> roomBSeries;
+    private XYChart.Series<Number, Number> serverRoomSeries;
+    private XYChart.Series<Number, Number> officeRoomSeries;
     private Timeline timeline;
     private DataModule dataModule;
 
@@ -25,13 +25,13 @@ public class TemperaturesChartIndicator extends LineChart<Number, Number> implem
 
         NumberAxis yAxis = (NumberAxis) this.getYAxis();
         yAxis.setAutoRanging(false);
-        yAxis.setLabel("Температуры по цельсию");
+        yAxis.setLabel("Температуры по Цельсию");
 
-        roomASeries = new XYChart.Series<>();
-        roomBSeries = new XYChart.Series<>();
+        serverRoomSeries = new XYChart.Series<>();
+        officeRoomSeries = new XYChart.Series<>();
 
-        roomASeries.setName("Комната А");
-        roomBSeries.setName("Комната Б");
+        serverRoomSeries.setName("Серверная комната");
+        officeRoomSeries.setName("Офисное помещение");
 
         this.setAnimated(false);
         this.setTitle("Изменение температур во времени");
@@ -40,31 +40,38 @@ public class TemperaturesChartIndicator extends LineChart<Number, Number> implem
     }
 
     private void init() {
-        this.getData().add(roomASeries);
-        this.getData().add(roomBSeries);
+        this.setMinSize(800, 700);
+
+        this.getData().add(serverRoomSeries);
+        this.getData().add(officeRoomSeries);
         timeline = new Timeline();
 
-        ((NumberAxis)this.getYAxis()).setUpperBound(Math.floor(dataModule.getHighestTemperature()) + 10);
+        ((NumberAxis)this.getYAxis()).setUpperBound(30);
+        ((NumberAxis)this.getYAxis()).setLowerBound(10);
     }
 
-    public void plot(int timePoint, double roomATemperature, double roomBTemperature) {
-        roomASeries.getData().add(new Data<>(timePoint, roomATemperature));
-        roomBSeries.getData().add(new Data<>(timePoint, roomBTemperature));
+    public void plot(int timePoint, double serverRoomTemperature, double officeRoomTemperature) {
+        serverRoomSeries.getData().add(new Data<>(timePoint, serverRoomTemperature));
+        officeRoomSeries.getData().add(new Data<>(timePoint, officeRoomTemperature));
     }
 
     @Override
     public void refresh() {
-        roomASeries.getData().clear();
-        roomBSeries.getData().clear();
+        serverRoomSeries.getData().clear();
+        officeRoomSeries.getData().clear();
         this.getData().clear();
         this.getData().clear();
         // plotting first data at 0 point of time
-        plot(0, dataModule.getRoomATemperatures().get(0), dataModule.getRoomBTemperatures().get(0));
+        //plot(0, dataModule.getServerRoomTemperature(), dataModule.getOfficeRoomTemperature());
         init();
     }
 
     public void setTimeUpperBound(double bound) {
         ((NumberAxis) this.getXAxis()).setUpperBound(bound);
+    }
+
+    public void setTimeLowerBound(double bound) {
+        ((NumberAxis) this.getXAxis()).setLowerBound(bound);
     }
 
     public Timeline getAnimation() {

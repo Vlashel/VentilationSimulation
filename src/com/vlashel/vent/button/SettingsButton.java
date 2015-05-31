@@ -1,13 +1,13 @@
 package com.vlashel.vent.button;
 
-import com.vlashel.vent.AnimationMediator;
+import com.vlashel.vent.ControllerMediator;
 import javafx.scene.control.Button;
 
 public class SettingsButton extends Button {
-    public SettingsButton(AnimationMediator animationMediator) {
+    public SettingsButton(ControllerMediator controllerMediator) {
         this.setText("Настройки...");
         this.setOnAction(e ->
-                animationMediator.displaySettingsWindow()
+                controllerMediator.displaySettingsWindow()
         );
     }
 

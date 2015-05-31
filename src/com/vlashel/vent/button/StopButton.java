@@ -1,15 +1,19 @@
 package com.vlashel.vent.button;
 
-import com.vlashel.vent.AnimationMediator;
+import com.vlashel.vent.ControllerMediator;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 
 public class StopButton extends Button {
-    public StopButton(AnimationMediator animationMediator) {
+    public StopButton(ControllerMediator controllerMediator) {
         this.setOnAction(
-                (ActionEvent event) -> animationMediator.finishAnimation()
+                (ActionEvent event) -> {
+                    controllerMediator.setIsRecuperationOn(false);
+                    controllerMediator.enableStartButton();
+                    disable();
+                }
         );
-        this.setText("Остановить");
+        this.setText("Остановить рекуперацию");
     }
 
     public void enable() {

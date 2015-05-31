@@ -24,6 +24,10 @@ public class ElapsedTimeCounter implements Refreshable {
         init();
     }
 
+    public void setTimeLeft(int timeLeft) {
+        this.timeLeft = timeLeft;
+    }
+
     public int getTimeLeft() {
         return timeLeft;
     }

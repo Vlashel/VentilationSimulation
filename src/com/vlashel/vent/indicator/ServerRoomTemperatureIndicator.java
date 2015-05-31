@@ -7,11 +7,11 @@ import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 
 
-public class RoomATemperatureIndicator extends Label implements Refreshable {
+public class ServerRoomTemperatureIndicator extends Label implements Refreshable {
 
     private DataModule dataModule;
 
-    public RoomATemperatureIndicator(DataModule dataModule) {
+    public ServerRoomTemperatureIndicator(DataModule dataModule) {
         this.dataModule = dataModule;
         this.setFont(Font.font(30));
         this.setMinSize(110, 70);
@@ -20,7 +20,7 @@ public class RoomATemperatureIndicator extends Label implements Refreshable {
     }
 
     private void init() {
-        this.setText(String.valueOf(Helper.pack(dataModule.getRoomAInitialTemperature())));
+        this.setText(String.valueOf(Helper.pack(dataModule.getServerRoomTemperature())));
     }
 
     @Override
