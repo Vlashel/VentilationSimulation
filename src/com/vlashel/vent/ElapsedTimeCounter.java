@@ -1,22 +1,22 @@
 package com.vlashel.vent;
 
 public class ElapsedTimeCounter implements Refreshable {
-    private volatile int timeLeft;
+    private volatile int elapsedTime;
 
     public ElapsedTimeCounter() {
         init();
     }
 
     private void init() {
-        timeLeft = 0;
+        elapsedTime = 0;
     }
 
     public void increment() {
-        timeLeft++;
+        elapsedTime++;
     }
 
     public void decrement() {
-        timeLeft--;
+        elapsedTime--;
     }
 
     @Override
@@ -24,11 +24,11 @@ public class ElapsedTimeCounter implements Refreshable {
         init();
     }
 
-    public void setTimeLeft(int timeLeft) {
-        this.timeLeft = timeLeft;
+    public void setElapsedTime(int elapsedTime) {
+        this.elapsedTime = elapsedTime;
     }
 
-    public int getTimeLeft() {
-        return timeLeft;
+    public int getElapsedTime() {
+        return elapsedTime;
     }
 }

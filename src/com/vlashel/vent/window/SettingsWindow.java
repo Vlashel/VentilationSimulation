@@ -38,10 +38,10 @@ public class SettingsWindow {
         SimulationSpeedInput simulationSpeedInput = new SimulationSpeedInput(dataModule);
 
         VBox labels = new VBox(
-                new Label("Температура в комнате А, по Цельсию:"),
-                new Label("Температура в комнате Б, по Цельсию:"),
-                new Label("Объем комнаты А, в м3:"),
-                new Label("Объем комнаты Б, в м3:"),
+                new Label("Температура в серверной комнате, по Цельсию:"),
+                new Label("Температура в офисном помещении, по Цельсию:"),
+                new Label("Объем серверной комнаты, в м3:"),
+                new Label("Объем офисного помещения, в м3:"),
                 new Label("Объемный расход, в м3/сек:"),
                 new Label("Скорость симуляции:")
         );
@@ -80,14 +80,4 @@ public class SettingsWindow {
         window.setScene(scene);
         window.showAndWait();
     }
-
-  /*  private String validateInput(String input) {
-        if (input.matches("\\d+\\.?\\d*")) {
-            return input;
-        } else {
-            animationMediator.displayAlertBox("Invalid input", "Should be a numerical value!");
-            valid = false;
-            return "Invalid";
-        }
-    }*/
 }

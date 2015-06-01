@@ -22,9 +22,10 @@ public class MainWindow extends Application {
     private ControllerMediator controllerMediator;
 
     private void init(Stage primaryStage) {
-        controllerMediator = new ControllerMediator();
-        DataModule dataModule = new DataModule(controllerMediator);
-        TemperaturesChartIndicator chart = new TemperaturesChartIndicator(dataModule);
+        DataModule dataModule = new DataModule();
+        controllerMediator = new ControllerMediator(dataModule);
+
+        TemperaturesChartIndicator chart = new TemperaturesChartIndicator();
 
         Ventilator serverRoomVentilatorIn = new Ventilator();
         Ventilator serverRoomVentilatorOut = new Ventilator(-360);
@@ -38,14 +39,13 @@ public class MainWindow extends Application {
         ServerRoomTemperatureIndicator serverRoomTemperatureIndicator = new ServerRoomTemperatureIndicator(dataModule);
         OfficeRoomTemperatureIndicator officeRoomTemperatureIndicator = new OfficeRoomTemperatureIndicator(dataModule);
         DesiredTemperatureIndicator desiredTemperatureIndicator = new DesiredTemperatureIndicator();
-        ElapsedTimeIndicator elapsedTimeIndicator = new ElapsedTimeIndicator();
+        TimeLeftIndicator timeLeftIndicator = new TimeLeftIndicator();
 
         SettingsWindow settingsWindow = new SettingsWindow(controllerMediator, dataModule);
         ServerRoomVolumeIndicator serverRoomVolumeIndicator = new ServerRoomVolumeIndicator(dataModule);
         OfficeRoomVolumeIndicator officeRoomVolumeIndicator = new OfficeRoomVolumeIndicator(dataModule);
         VolumetricFlowRateIndicator volumetricFlowRateIndicator = new VolumetricFlowRateIndicator(dataModule);
 
-        controllerMediator.registerDataModule(dataModule);
 
         controllerMediator.registerTemperaturesChart(chart);
         controllerMediator.registerServerRoomVentilators(
@@ -56,7 +56,7 @@ public class MainWindow extends Application {
                 officeRoomVentilatorIn,
                 officeRoomVentilatorOut
         );
-        controllerMediator.registerElapsedTimeIndicator(elapsedTimeIndicator);
+        controllerMediator.registerElapsedTimeIndicator(timeLeftIndicator);
         TemperatureSliderInput temperatureSliderInput = new TemperatureSliderInput(dataModule, controllerMediator);
         controllerMediator.registerStartButton(startButton);
         controllerMediator.registerStopButton(stopButton);
@@ -65,8 +65,8 @@ public class MainWindow extends Application {
         controllerMediator.registerRoomBTemperatureIndicator(officeRoomTemperatureIndicator);
         controllerMediator.registerTemperatureSlider(temperatureSliderInput);
         controllerMediator.registerDesiredTemperatureIndicator(desiredTemperatureIndicator);
-        controllerMediator.registerRoomAVolumeIndicator(serverRoomVolumeIndicator);
-        controllerMediator.registerRoomBVolumeIndicator(officeRoomVolumeIndicator);
+        controllerMediator.registerServerRoomVolumeIndicator(serverRoomVolumeIndicator);
+        controllerMediator.registerOfficeRoomVolumeIndicator(officeRoomVolumeIndicator);
         controllerMediator.registerVolumetricFlowRateIndicator(volumetricFlowRateIndicator);
         controllerMediator.registerInitialConditionsWindow(settingsWindow);
 
@@ -84,7 +84,7 @@ public class MainWindow extends Application {
                                 )
                         ),
                         temperatureSliderInput,
-                        new HBox(new HBox(new Label("Желаемая температура: "), desiredTemperatureIndicator), new HBox(new Label("Оставшееся время: "), elapsedTimeIndicator)),
+                        new HBox(new HBox(new Label("Желаемая температура: "), desiredTemperatureIndicator), new HBox(new Label("Оставшееся время: "), timeLeftIndicator)),
                         new HBox(
                                 new VBox(startButton, stopButton),
                                 new VBox(
@@ -115,7 +115,7 @@ public class MainWindow extends Application {
         primaryStage.setTitle("Thermocycle");
         primaryStage.getIcons().add(new Image(getClass().getResource("icon-png.png").toExternalForm()));
         primaryStage.show();
-        controllerMediator.animate();
+        controllerMediator.control();
     }
 
     public static void main(String[] args) {

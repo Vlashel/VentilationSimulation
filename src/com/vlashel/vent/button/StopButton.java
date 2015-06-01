@@ -8,8 +8,12 @@ public class StopButton extends Button {
     public StopButton(ControllerMediator controllerMediator) {
         this.setOnAction(
                 (ActionEvent event) -> {
-                    controllerMediator.setIsRecuperationOn(false);
+                    controllerMediator.setRecuperate(false);
                     controllerMediator.enableStartButton();
+                    controllerMediator.disableTemperatureSlider();
+                    controllerMediator.disableDesiredTemperatureIndicator();
+                    controllerMediator.disableTimeLeftIndicator();
+                    controllerMediator.refreshElapsedTimeCounter();
                     disable();
                 }
         );

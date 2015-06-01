@@ -16,12 +16,14 @@ public class TemperatureSliderInput extends Slider implements Refreshable {
         this.setMajorTickUnit(1);
         this.setMaxWidth(355);
 
+        disable();
+
         init();
 
         this.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                if (controllerMediator.getIsRecuperationOn()) {
+                if (dataModule.getRecuperate()) {
                     controllerMediator.makeTimeLeftPrediction();
                 }
             }
@@ -29,10 +31,10 @@ public class TemperatureSliderInput extends Slider implements Refreshable {
     }
 
     private void init() {
-        double lowestTemperature = Helper.pack(dataModule.getLowestTemperature());
+        double officeRoomTemperature = Helper.pack(dataModule.getOfficeRoomTemperature());
         double maximumAchievableTemperature = Helper.pack(dataModule.getMaximumAchievableTemperature());
 
-        this.setMin(lowestTemperature);
+        this.setMin(officeRoomTemperature);
         this.setMax(maximumAchievableTemperature);
     }
 
