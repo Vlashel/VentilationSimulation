@@ -1,6 +1,8 @@
 package com.vlashel.vent.indicator;
 
+import com.vlashel.vent.DataModule;
 import com.vlashel.vent.Refreshable;
+import javafx.animation.Timeline;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -8,9 +10,11 @@ import javafx.scene.chart.XYChart;
 public class TemperaturesChartIndicator extends LineChart<Number, Number> implements Refreshable {
     private XYChart.Series<Number, Number> serverRoomSeries;
     private XYChart.Series<Number, Number> officeRoomSeries;
+    private DataModule dataModule;
 
-    public TemperaturesChartIndicator() {
+    public TemperaturesChartIndicator(DataModule dataModule) {
         super(new NumberAxis(), new NumberAxis());
+        this.dataModule = dataModule;
         this.setCreateSymbols(false);
 
         NumberAxis xAxis = (NumberAxis) this.getXAxis();
@@ -41,6 +45,9 @@ public class TemperaturesChartIndicator extends LineChart<Number, Number> implem
 
         ((NumberAxis)this.getYAxis()).setUpperBound(30);
         ((NumberAxis)this.getYAxis()).setLowerBound(10);
+
+        // plotting first data at 0 point of time
+        plot(0, dataModule.getServerRoomTemperature(), dataModule.getOfficeRoomTemperature());
     }
 
     public void plot(int timePoint, double serverRoomTemperature, double officeRoomTemperature) {
@@ -65,5 +72,4 @@ public class TemperaturesChartIndicator extends LineChart<Number, Number> implem
     public void setTimeLowerBound(double bound) {
         ((NumberAxis) this.getXAxis()).setLowerBound(bound);
     }
-
 }

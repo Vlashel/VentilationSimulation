@@ -25,7 +25,7 @@ public class MainWindow extends Application {
         DataModule dataModule = new DataModule();
         controllerMediator = new ControllerMediator(dataModule);
 
-        TemperaturesChartIndicator chart = new TemperaturesChartIndicator();
+        TemperaturesChartIndicator chart = new TemperaturesChartIndicator(dataModule);
 
         Ventilator serverRoomVentilatorIn = new Ventilator();
         Ventilator serverRoomVentilatorOut = new Ventilator(-360);

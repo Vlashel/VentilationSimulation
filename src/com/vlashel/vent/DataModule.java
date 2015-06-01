@@ -63,7 +63,7 @@ public class DataModule {
             officeRoomTemperature += dTofficedt * dt;
             serverRoomTemperature += dTserverdt * dt;
         }
-        return officeRoomTemperature - precision;
+        return officeRoomTemperature - precision - 0.1;
     }
 
     public void setVolumetricFlowRate(double volumetricFlowRate) {
