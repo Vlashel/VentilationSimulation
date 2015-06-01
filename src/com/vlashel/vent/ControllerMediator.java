@@ -270,7 +270,10 @@ public class ControllerMediator implements Refreshable {
                 possiblyAdjustChart();
 
                 while (alwaysTrue()) {
-                    if (shouldRecuperateNow() && pack(serverRoomTemperature) >= serverRoomTemperatureMax && pack(officeRoomTemperature) < pack(desiredTemperature.get())) {
+                    if (shouldRecuperateNow()
+                            && pack(serverRoomTemperature) >= serverRoomTemperatureMax
+                            && pack(officeRoomTemperature) < pack(desiredTemperature.get())) {
+
                         Platform.runLater(() -> makeTimeLeftPrediction());
                         officeRoomVentilators.forEach(Ventilator::play);
 

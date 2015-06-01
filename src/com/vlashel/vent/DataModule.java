@@ -85,8 +85,11 @@ public class DataModule {
         double serverRoomTemperature = this.serverRoomTemperature;
 
         if (recuperate.get()) {
-            while (pack(officeRoomTemperature) < pack(desiredTemperature.get()) && shouldRecuperateNow(officeRoomTemperature)) {
-                if (shouldRecuperateNow(officeRoomTemperature) && pack(serverRoomTemperature) >= serverRoomTemperatureMax) {
+            while (pack(officeRoomTemperature) <= pack(desiredTemperature.get()) && shouldRecuperateNow(officeRoomTemperature)) {
+
+                if (shouldRecuperateNow(officeRoomTemperature)
+                        && pack(serverRoomTemperature) >= serverRoomTemperatureMax) {
+
                     while (pack(officeRoomTemperature) <= pack(desiredTemperature.get())
                             && pack(serverRoomTemperature) <= serverRoomTemperatureMax
                             && pack(serverRoomTemperature) >= serverRoomTemperatureMin
@@ -99,7 +102,9 @@ public class DataModule {
                         serverRoomTemperature += dTserverdt * dt;
                         timePoint += dt;
                     }
+
                 } else {
+
                     if (pack(serverRoomTemperature) >= serverRoomTemperatureMax) {
                         while (pack(serverRoomTemperature) >= serverRoomTemperatureMin && !shouldRecuperateNow(officeRoomTemperature)) {
 
@@ -119,6 +124,7 @@ public class DataModule {
                         }
                         timePoint += dt;
                     }
+
                 }
             }
         }
