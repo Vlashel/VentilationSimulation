@@ -2,7 +2,6 @@ package com.vlashel.vent.indicator;
 
 import com.vlashel.vent.DataModule;
 import com.vlashel.vent.Refreshable;
-import javafx.animation.Timeline;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;

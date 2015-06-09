@@ -88,7 +88,7 @@ public class DataModule {
             while (pack(officeRoomTemperature) <= pack(desiredTemperature.get()) && shouldRecuperateNow(officeRoomTemperature)) {
 
                 if (shouldRecuperateNow(officeRoomTemperature)
-                        && pack(serverRoomTemperature) >= serverRoomTemperatureMax) {
+                        && pack(serverRoomTemperature) == serverRoomTemperatureMax) {
 
                     while (pack(officeRoomTemperature) <= pack(desiredTemperature.get())
                             && pack(serverRoomTemperature) <= serverRoomTemperatureMax
@@ -105,7 +105,7 @@ public class DataModule {
 
                 } else {
 
-                    if (pack(serverRoomTemperature) >= serverRoomTemperatureMax) {
+                    if (pack(serverRoomTemperature) >= serverRoomTemperatureMax && !shouldRecuperateNow(officeRoomTemperature)) {
                         while (pack(serverRoomTemperature) >= serverRoomTemperatureMin && !shouldRecuperateNow(officeRoomTemperature)) {
 
                             double dTserverdt = ((volumetricFlowRate / serverRoomVolume) * (outsideAirTemperature - serverRoomTemperature)) + serverRoomTemperatureIncrease;

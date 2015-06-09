@@ -271,7 +271,7 @@ public class ControllerMediator implements Refreshable {
 
                 while (alwaysTrue()) {
                     if (shouldRecuperateNow()
-                            && pack(serverRoomTemperature) >= serverRoomTemperatureMax
+                            && pack(serverRoomTemperature) == serverRoomTemperatureMax
                             && pack(officeRoomTemperature) < pack(desiredTemperature.get())) {
 
                         Platform.runLater(() -> makeTimeLeftPrediction());
@@ -297,7 +297,7 @@ public class ControllerMediator implements Refreshable {
 
                         officeRoomVentilators.forEach(Ventilator::stop);
                     } else {
-                        if (pack(serverRoomTemperature) >= serverRoomTemperatureMax) {
+                        if (pack(serverRoomTemperature) >= serverRoomTemperatureMax && !shouldRecuperateNow()) {
                             serverRoomVentilators.forEach(Ventilator::play);
 
                             while (pack(serverRoomTemperature) >= serverRoomTemperatureMin && !shouldRecuperateNow()) {
@@ -326,11 +326,10 @@ public class ControllerMediator implements Refreshable {
                             }
 
                             Platform.runLater(() -> callback());
+
+                            sleep();
                         }
                     }
-
-                    sleep();
-
                 }
                 return null;
             }
