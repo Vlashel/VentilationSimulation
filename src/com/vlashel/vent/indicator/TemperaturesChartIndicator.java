@@ -42,7 +42,7 @@ public class TemperaturesChartIndicator extends LineChart<Number, Number> implem
         this.getData().add(serverRoomSeries);
         this.getData().add(officeRoomSeries);
 
-        ((NumberAxis)this.getYAxis()).setUpperBound(30);
+        ((NumberAxis)this.getYAxis()).setUpperBound(dataModule.getServerRoomTemperatureMax() + 3);
         ((NumberAxis)this.getYAxis()).setLowerBound(10);
 
         // plotting first data at 0 point of time

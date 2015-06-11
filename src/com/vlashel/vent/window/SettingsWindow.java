@@ -27,8 +27,8 @@ public class SettingsWindow {
         window.initModality(Modality.APPLICATION_MODAL);
         window.setTitle("Настройки");
 
-        ServerRoomTemperatureInput serverRoomTemperatureInput = new ServerRoomTemperatureInput(dataModule);
-        OfficeRoomTemperatureInput officeRoomTemperatureInput = new OfficeRoomTemperatureInput(dataModule);
+        ServerRoomTemperatureMaxInput serverRoomTemperatureMaxInput = new ServerRoomTemperatureMaxInput(dataModule);
+        ServerRoomTemperatureMinInput serverRoomTemperatureMinInput = new ServerRoomTemperatureMinInput(dataModule);
 
         ServerRoomVolumeInput serverRoomVolumeInput = new ServerRoomVolumeInput(dataModule);
         OfficeRoomVolumeInput officeRoomVolumeInput = new OfficeRoomVolumeInput(dataModule);
@@ -38,8 +38,8 @@ public class SettingsWindow {
         SimulationSpeedInput simulationSpeedInput = new SimulationSpeedInput(dataModule);
 
         VBox labels = new VBox(
-                new Label("Температура в серверной комнате, по Цельсию:"),
-                new Label("Температура в офисном помещении, по Цельсию:"),
+                new Label("Максимальная температура в серверной комнате, по Цельсию:"),
+                new Label("Минимальная температура в серверной комнате, по Цельсию:"),
                 new Label("Объем серверной комнаты, в м3:"),
                 new Label("Объем офисного помещения, в м3:"),
                 new Label("Объемный расход, в м3/сек:"),
@@ -49,8 +49,8 @@ public class SettingsWindow {
         labels.setSpacing(10);
 
         VBox inputs = new VBox(
-                serverRoomTemperatureInput,
-                officeRoomTemperatureInput,
+                serverRoomTemperatureMinInput,
+                serverRoomTemperatureMaxInput,
                 serverRoomVolumeInput,
                 officeRoomVolumeInput,
                 volumetricFlowRateInput,
@@ -59,8 +59,8 @@ public class SettingsWindow {
 
         Button saveButton = new Button("Сохранить");
         saveButton.setOnAction(e -> {
-            dataModule.setServerRoomTemperature(Double.valueOf(serverRoomTemperatureInput.getText()));
-            dataModule.setOfficeRoomTemperature(Double.valueOf(officeRoomTemperatureInput.getText()));
+            dataModule.setServerRoomTemperatureMin(Double.valueOf(serverRoomTemperatureMinInput.getText()));
+            dataModule.setServerRoomTemperatureMax(Double.valueOf(serverRoomTemperatureMaxInput.getText()));
             dataModule.setServerRoomVolume(Double.valueOf(serverRoomVolumeInput.getText()));
             dataModule.setOfficeRoomVolume(Double.valueOf(officeRoomVolumeInput.getText()));
             dataModule.setVolumetricFlowRate(Double.valueOf(volumetricFlowRateInput.getText()));
